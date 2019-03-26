@@ -23,5 +23,7 @@
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3"
   },
-  "dependencies": {}
+  "dependencies": {
+    "react-router-dom": "^5.0.0"
+  }
 }

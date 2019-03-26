@@ -15,13 +15,16 @@ import members_only.views
 # Learn more here: https://docs.djangoproject.com/en/2.1/topics/http/urls/
 
 router = routers.DefaultRouter()
-router.register(r'users', members_only.views.UserViewSet)
-router.register(r'groups', members_only.views.GroupViewSet)
+router.register(r'user', members_only.views.UserViewSet)
+router.register(r'post', members_only.views.PostViewSet)
+router.register(r'comment', members_only.views.CommentViewSet)
+router.register(r'photo', members_only.views.PhotoViewSet)
+router.register(r'short-link', members_only.views.ShortLinkViewSet)
 
 urlpatterns = [
     path("", members_only.views.index, name="index"),
+    path("feed/", members_only.views.index, name="index"),
     path('api/', include(router.urls)),
-    path("db/", members_only.views.db, name="db"),
     path("admin/", admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
