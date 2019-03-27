@@ -1,35 +1,41 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from members_only.serializers import UserSerializer, GroupSerializer
-
-from .models import Greeting
+from members_only.models import User, Post, Comment, Photo, ShortLink
+from members_only.serializers import UserSerializer, PostSerializer, CommentSerializer, PhotoSerializer, ShortLinkSerializer
 
 # Create your views here.
+
+
+# Front End Views
 def index(request):
     return render(request, "index.html")
 
 
-def db(request):
+def feed(request):
+    return render(request, "feed.html")
 
-    greeting = Greeting()
-    greeting.save()
 
-    greetings = Greeting.objects.all()
-
-    return render(request, "db.html", {"greetings": greetings})
-
+# Back End Views
 class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
 
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all().order_by('-timestamp')
+    serializer_class = PostSerializer
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all().order_by('-timestamp')
+    serializer_class = CommentSerializer
+
+
+class PhotoViewSet(viewsets.ModelViewSet):
+    queryset = Photo.objects.all()
+    serializer_class = PhotoSerializer
+
+
+class ShortLinkViewSet(viewsets.ModelViewSet):
+    queryset = ShortLink.objects.all()
+    serializer_class = ShortLinkSerializer
