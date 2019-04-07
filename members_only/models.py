@@ -15,11 +15,12 @@ class User(AbstractUser):
 
     # ManyToManyField models an array in this case. Many users could block many Members could block the same Members.
     # Because the ManyToManyField refers to a Member blocking Members, we use "self".
-    blocked_members = models.ManyToManyField("self")
+    blocked_members = models.ManyToManyField("self", blank=True, )
 
     address = models.TextField(default="")
     points_balance = models.IntegerField(default=0)
     stripe_card = models.CharField(max_length=100, default="")
+    reset_code = models.CharField(max_length=10, default="")
 
 
 class Post(models.Model):
