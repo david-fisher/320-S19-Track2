@@ -1,29 +1,39 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import PropTypes from "prop-types";
+
 class DataProvider extends Component {
-  static propTypes = {
-    endpoint: PropTypes.string.isRequired,
-    render: PropTypes.func.isRequired
-  };
-  state = {
-      data: [],
-      loaded: false,
-      placeholder: "Loading..."
+    static propTypes = {
+        endpoint: PropTypes.string.isRequired,
+        render: PropTypes.func.isRequired,
+        token: PropTypes.string.isRequired
     };
-  componentDidMount() {
-    fetch(this.props.endpoint)
-      .then(response => {
-        if (response.status !== 200) {
-          return this.setState({ placeholder: "Something went wrong" });
-        }
-        return response.json();
-      })
-      .then(data => this.setState({ data: data, loaded: true }));
-  }
-  render() {
-    const { data, loaded, placeholder } = this.state;
-    console.log(data);
-    return loaded ? this.props.render(data.results) : <p>{placeholder}</p>;
-  }
+
+    state = {
+        data: [],
+        loaded: false,
+        placeholder: "Loading..."
+    };
+
+    componentDidMount() {
+
+        fetch(this.props.endpoint, {
+            headers: new Headers({'Authorization': 'Token ' + this.props.token}),
+        })
+            .then(response => {
+                if (response.status !== 200) {
+                    return this.setState({placeholder: "Something went wrong"});
+                }
+
+                return response.json();
+            })
+            .then(data => this.setState({data: data, loaded: true}));
+    }
+
+    render() {
+        const {data, loaded, placeholder} = this.state;
+        console.log(data);
+        return loaded ? this.props.render(data.results) : <p>{placeholder}</p>;
+    }
 }
+
 export default DataProvider;
