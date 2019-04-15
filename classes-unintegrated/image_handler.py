@@ -1,4 +1,9 @@
-from PIL import Image
+# from PIL import Image
+from os import listdir
+from os.path import isfile, join
+
+items_dir_path = 'sponsored_items'
+item_files = [f for f in listdir(items_dir_path) if isfile(join(items_dir_path, f))]
 
 
 def get_filters():
@@ -15,4 +20,8 @@ def apply_filter(image, filter_id, *args):
 
 def remove_filters(image):
     pass
+
+
+if __name__ == '__main__':
+    print(item_files)
 
