@@ -14,7 +14,7 @@ class sponsoredImageInsertion:
         img_copy = img.copy()
 
         # retrieve the proper sponsored item insert
-        insert = Image.open('sponsored_items/' + sponsored_item + '.jpg')
+        insert = Image.open('sponsored_items/' + sponsored_item + '.png')
 
         # resize the sponsored item
         insert = insert.resize((scale,scale), Image.ANTIALIAS)
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     # Open the image file and read in its data so that we can access it
     img = Image.open('../fisher.jpeg')
 
-    new_img = sponsoredImageInsertion.insert(img, "coca cola")
+    new_img = sponsoredImageInsertion.insert(img, "pepsi")
 
     # Save the image file so that we can view it
     new_img.save('sponsored_item_pic.bmp')

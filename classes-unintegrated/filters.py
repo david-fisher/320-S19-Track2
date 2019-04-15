@@ -1,26 +1,25 @@
 from PIL import Image
-from PIL import ImageFilter
 
-def clubFilter(img):
-    width, height = img.size
-    new_img = img.copy()
-    for x in range(width):
-        for y in range(height):
-            r, g, b = img.getpixel((x,y))
-            new_img.putpixel((x,y), (r, 0, b))
+class Filters:
 
-    return new_img
+    def club_filter(img):
 
+        # Retrieve the width and height of the image
+        width, height = img.size
 
-def filter_name(img):
-    # Get the width and height (number of columns and rows) of the image
-    width, height = img.size
-    # Make a copy of the image so that we don't write over the original data.
-    new_img = img.copy()
-    return new_img
+        # Create a copy of the original image
+        img_copy = img.copy()
 
-# The entry point for our application. This is where the computer will
-# begin running our code.
+        # Two for loops in order to change each pixel
+        for x in range(width):
+            for y in range(height):
+                # Take the pixel at (x, y)
+                r, g, b = img.getpixel((x,y))
+                # Remove the Green values from that pixel and apply the change to the image
+                img_copy.putpixel((x,y), (r, 0, b))
+
+        return img_copy
+
 
 if __name__ == '__main__':
     # Open the image file and read in its data so that we can access it
@@ -28,7 +27,7 @@ if __name__ == '__main__':
 
     # Run the code for the filter. We should replace filter_name
     # with the name of our filter.
-    new_img = mask(img)
+    new_img = Filters.clubFilter(img)
 
     # Save the image file so that we can view it
     new_img.save('OutputImage.bmp')
