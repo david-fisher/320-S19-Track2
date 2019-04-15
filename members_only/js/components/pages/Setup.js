@@ -48,8 +48,11 @@ class Setup extends Component {
         }
 
         let data = JSON.stringify({
+            "first_name": this.firstn.value,
+            "last_name": this.lastn.value,
             "email": this.email.value,
             "password": this.password.value,
+            "address": this.address.value,
             "reset_code": this.access_code.value
         });
 
@@ -84,6 +87,20 @@ class Setup extends Component {
 
                         <div className="field">
                             <p className="control has-icons-left has-icons-right">
+                                <input className="input" type="text" placeholder="First Name"
+                                       ref={(input) => this.first_name = input}/>
+                            </p>
+                        </div>
+                
+                        <div className="field">
+                            <p className="control has-icons-left has-icons-right">
+                                <input className="input" type="text" placeholder="Last Name"
+                                       ref={(input) => this.last_name = input}/>
+                            </p>
+                        </div>
+                
+                        <div className="field">
+                            <p className="control has-icons-left has-icons-right">
                                 <input className="input" type="email" placeholder="Email"
                                        ref={(input) => this.email = input}/>
                                 <span className="icon is-small is-left">
@@ -102,6 +119,13 @@ class Setup extends Component {
                             </p>
                         </div>
 
+                        <div className="field">
+                            <p className="control has-icons-left has-icons-right">
+                                <input className="input" type="text" placeholder="Address"
+                                       ref={(input) => this.address = input}/>
+                            </p>
+                        </div>
+            
                         <div className="field">
                             <p className="control has-icons-left">
                                 <input className="input" type="password" placeholder="Password"
