@@ -1,32 +1,38 @@
 from PIL import Image
 from PIL import ImageFilter
 
-class sponsored_image_insertion:
+class sponsoredImageInsertion:
 
-    def insert(img, sponsored_item):
-        width, height = img.size;
-        scale = (width/5)
-        new_img = img.copy()
-        insert = Image.open("/sponsored_items/" + sponsored_item + '.jpg')
+    def insert(mg, sponsored_item):
+        # retrieve the width and height of the image for the scale
+        width, height = img.size
+
+        # create a scale for insert to be resized to
+        scale = round(width/5)
+
+        # create a copy of the original image
+        img_copy = img.copy()
+
+        # retrieve the proper sponsored item insert
+        insert = Image.open('sponsored_items/' + sponsored_item + '.jpg')
+
         # resize the sponsored item
-        insert = insert.resize(scale, Image.ANTIALIAS)
+        insert = insert.resize((scale,scale), Image.ANTIALIAS)
 
         for x in range(scale):
             for y in range(scale):
-                new_img = new_img.putpixel((x, y), insert.getpixel(x, y))
+                pixel = insert.getpixel((x, y))
+                img_copy.putpixel((x, y), pixel)
 
-        return new_img
+        # return the image with the sponsored content inserted
+        return img_copy
 
-# The entry point for our application. This is where the computer will
-# begin running our code.
-
+# Main which is just here for testing
 if __name__ == '__main__':
     # Open the image file and read in its data so that we can access it
     img = Image.open('../fisher.jpeg')
 
-    # Run the code for the filter. We should replace filter_name
-    # with the name of our filter.
-    new_img = sponsored_image_insertion.insert(img, "coca cola")
+    new_img = sponsoredImageInsertion.insert(img, "coca cola")
 
     # Save the image file so that we can view it
-    new_img.save('sponsored_item_pic.jpg')
+    new_img.save('sponsored_item_pic.bmp')
