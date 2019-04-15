@@ -1,7 +1,7 @@
 import unittest
 
 
-class TestModel1(unittest.TestCase):
+class URLTests(unittest.TestCase):
 
     test_urls = {
         "https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwiUwIu36NLhAhXHTN8KHebjAL8QjRx6BAgBEAQ&url=https%3A%2F%2Fwww.amazon.com%2FShrek-Forever-After-Single-Disc-Myers%2Fdp%2FB002ZG9904&psig=AOvVaw0zRU5IHtsjG7v2c_Rdsycz&ust=1555442347913753": "21934abf0",
