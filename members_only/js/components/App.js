@@ -1,73 +1,90 @@
 import React, {Component} from 'react';
 import ReactDOM from "react-dom";
-import DataProvider from "./DataProvider";
-import Table from "./Table";
 import {BrowserRouter as Router, Route, Link, NavLink} from 'react-router-dom';
+import Login from "./pages/Login";
+import Navbar from "./Navbar";
+import Feed from "./pages/Feed";
+import Home from "./pages/Home";
+import Cookies from "universal-cookie";
+import Logout from "./pages/Logout";
+import Invite from "./pages/Invite";
+import Setup from "./pages/Setup";
 
-const Home = () => (
-    <div>
-        Homepage.
-    </div>
-)
-
-const Feed = () => (
-    <div>
-        <DataProvider endpoint="api/post/" render={data => <Table data={data}/>}/>
-    </div>
-)
 
 class App extends Component {
+    constructor(props) {
+        super(props);
+
+        const cookies = new Cookies();
+        let token = cookies.get('user_token');
+
+        if (token == null) {
+            this.state = {
+                token: null,
+                logged_in: false,
+            }
+        } else {
+            this.state = {
+                token: token,
+                logged_in: true,
+            }
+        }
+    }
+
+    updateToken(token) {
+        if (token == null) {
+            this.setState({
+                token: null,
+                logged_in: false,
+            });
+        } else {
+            this.setState({
+                token: token,
+                logged_in: true,
+            });
+        }
+    }
+
     render() {
-        return (
+        return this.state.logged_in ? (
             <Router>
                 <div className="App">
-                    <nav className="navbar" role="navigation" aria-label="main navigation">
-                        <div className="navbar-brand">
-                            <Link className="navbar-item" href="/">
-                                Members Only
-                            </Link>
+                    <Navbar loggedIn={this.state.logged_in}/>
 
-                            <a role="button" className="navbar-burger burger" aria-label="menu" aria-expanded="false"
-                               data-target="navbarBasicExample">
-                                <span aria-hidden="true"></span>
-                                <span aria-hidden="true"></span>
-                                <span aria-hidden="true"></span>
-                            </a>
+                    <div className="section">
+                        <div className="container">
+                            <Route exact path="/" component={Home}/>
+                            <Route exact path="/user/invite"
+                                   render={
+                                       (props) => <Invite {...props} token={this.state.token}/>
+                                   }/>
+                            <Route exact path="/feed"
+                                   render={
+                                       (props) => <Feed {...props} token={this.state.token}/>
+                                   }/>
+                            <Route exact path="/user/logout"
+                                   render={
+                                       (props) => <Logout {...props} updateToken={this.updateToken.bind(this)}/>
+                                   }/>
                         </div>
+                    </div>
 
-                        <div id="navbarBasicExample" className="navbar-menu">
-                            <div className="navbar-start">
-                                <NavLink to="/" className="navbar-item">
-                                    Home
-                                </NavLink>
+                </div>
+            </Router>
+        ) : (
+            <Router>
+                <div className="App">
+                    <Navbar loggedIn={this.state.logged_in}/>
 
-                                <NavLink to="/feed" className="navbar-item">
-                                    Feed
-                                </NavLink>
-
-                                <a href="/api" className="navbar-item">
-                                    API Documentation
-                                </a>
-                            </div>
-
-                            <div className="navbar-end">
-                                <div className="navbar-item">
-                                    <div className="buttons">
-                                        <a className="button is-primary">
-                                            <strong>Sign up</strong>
-                                        </a>
-                                        <a className="button is-light">
-                                            Log in
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                    <div className="section">
+                        <div className="container">
+                            <Route exact path="/" component={Home}/>
+                            <Route exact path="/user/login"
+                                   render={
+                                       (props) => <Login {...props} updateToken={this.updateToken.bind(this)}/>
+                                   }/>
+                            <Route exact path="/user/setup" component={Setup}/>
                         </div>
-                    </nav>
-
-                    <div className="container">
-                        <Route exact path="/" component={Home}/>
-                        <Route exact path="/feed" component={Feed}/>
                     </div>
 
                 </div>

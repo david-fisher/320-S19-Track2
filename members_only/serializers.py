@@ -8,6 +8,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'url', 'username', 'email', 'first_name', 'last_name', 'address', 'blocked_members', 'points_balance', 'stripe_card')
 
 
+class UserSetupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('email', 'reset_code', 'password')
+
+
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
