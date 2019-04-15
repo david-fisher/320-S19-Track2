@@ -17,9 +17,6 @@ def filter_name(img):
     width, height = img.size
     # Make a copy of the image so that we don't write over the original data.
     new_img = img.copy()
-
-    # PUT YOUR CODE HERE
-
     return new_img
 
 # The entry point for our application. This is where the computer will
