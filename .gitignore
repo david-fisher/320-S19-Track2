@@ -6,3 +6,6 @@ db.sqlite3
 node_modules
 \.idea/
 uploads/
+
+.vscode
+.vscode/

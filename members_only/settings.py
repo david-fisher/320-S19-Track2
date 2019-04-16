@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "members_only",
     "rest_framework",
-    "rest_framework.authtoken"
+    "rest_framework.authtoken",
+
+    # everything about databse go here
+    "database"
 ]
 
 MIDDLEWARE = [
