@@ -1,5 +1,6 @@
 from PIL import Image
 
+
 class ClubFilter:
 
     # Class' attributes
@@ -23,6 +24,7 @@ class ClubFilter:
                 img_copy.putpixel((x,y), (r, 0, b))
 
         return img_copy
+
 
 class Grayscale:
 
@@ -49,6 +51,7 @@ class Grayscale:
 
         return img_copy
 
+
 class Negative:
 
     # Class' attributes
@@ -72,6 +75,7 @@ class Negative:
                 img_copy.putpixel((x,y), (255-r, 255-g, 255-b))
 
         return img_copy
+
 
 if __name__ == '__main__':
     # Open the image file and read in its data so that we can access it
