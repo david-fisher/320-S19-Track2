@@ -10,6 +10,8 @@ class sponsoredImageInsertion:
         # create a scale for insert to be resized to
         width_scale = round(width/4)
         height_scale = round(height/4)
+        print(width_scale)
+        print(height_scale)
 
         # create a copy of the original image
         img_copy = img.copy()
@@ -18,7 +20,7 @@ class sponsoredImageInsertion:
         insert = Image.open('sponsored_items/' + sponsored_item + '.jpg')
 
         # resize the sponsored item
-        insert = insert.resize((width_scale,height_scale), Image.ANTIALIAS)
+        insert = insert.resize((width_scale,height_scale))
 
         for x in range(width_scale):
             for y in range(height_scale):
