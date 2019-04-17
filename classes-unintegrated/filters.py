@@ -109,6 +109,53 @@ class Sepia:
 
         return img_copy
 
+class Flip:
+
+    # Class' attributes
+    filter_name = "flip"
+    filter_preview_url = ""
+
+    # Filter method
+    def filter(img):
+        # Retrieve the width and height of the image
+        width, height = img.size
+
+        # Create a copy of the original image
+        img_copy = img.copy()
+
+        # Two for loops in order to change each pixel
+        for x in range(width):
+            for y in range(height):
+                # Take the pixel at (x, y)
+                r, g, b = img.getpixel((width-x-1, y))
+                # Subtract the r g b values from 255 in order to get the inverted values
+                img_copy.putpixel((x, y), (r, g, b))
+
+        return img_copy
+
+class Mirror:
+
+    # Class' attributes
+    filter_name = "mirror"
+    filter_preview_url = ""
+
+    # Filter method
+    def filter(img):
+        # Retrieve the width and height of the image
+        width, height = img.size
+
+        # Create a copy of the original image
+        img_copy = img.copy()
+
+        # Two for loops in order to change each pixel
+        for x in range(width//2):
+            for y in range(height):
+                # Take the pixel at (x, y)
+                r, g, b = img.getpixel((width-x-1, y))
+                # Subtract the r g b values from 255 in order to get the inverted values
+                img_copy.putpixel((x, y), (r, g, b))
+
+        return img_copy
 
 if __name__ == '__main__':
     # Open the image file and read in its data so that we can access it
@@ -118,8 +165,12 @@ if __name__ == '__main__':
     new_img_two = Grayscale.filter(img)
     new_img_three = Negative.filter(img)
     new_img_four = Sepia.filter(img)
+    new_img_five = Mirror.filter(img)
+    new_img_six = Flip.filter(img)
 
     new_img_one.save('club_filter.jpg')
     new_img_two.save('grayscale.jpg')
     new_img_three.save('negative.jpg')
     new_img_four.save('sepia.jpg')
+    new_img_five.save('mirror.jpg')
+    new_img_six.save('flip.jpg')
