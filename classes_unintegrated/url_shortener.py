@@ -1,20 +1,11 @@
+
 import random, string
+import classes_unintegrated.adapter as Adapter
 
 
 # user inputs url, see if it's in the database
 def long_url_exists(lUrl):
-	f = open("test.txt","r")
-	exists = 0
-	lncnt = 0
-	for x in f:
-		# for each line in the file, check the long url
-		cmp = x[17:]
-		#print('comparing ' + cmp + " to " + lUrl)
-		if(cmp == lUrl):
-			exists = lncnt
-		lncnt = lncnt + 1
-	f.close()
-	return exists
+    return Adapter.check_long_url(lUrl)
 
 
 def find_short_url(longLink):
@@ -73,16 +64,7 @@ def validateShortenedURL(link):
 
 # redirect a user clicking a long url to a shortened one
 def get_long_url(sUrl):
-	default = '404.php' # if a user clicks on an invalid shortened url
-	sLink = sUrl[20:] #www.membersonly.com/ spliced away
-	f = open("test.txt","r")
-	for x in f:
-		link16 = x[:16]
-		lUrl = x[17:]
-		#print('comparing ' + link16 + " and " + sLink)
-		if(link16 == sLink):
-			return lUrl
-	return default
+    return Adapter.get_long_url(sUrl)
 
 print(get_short_url("www.umass.edu"))
 print(get_long_url('www.membersonly.com/fQCPeau1TeR643Ft'))
