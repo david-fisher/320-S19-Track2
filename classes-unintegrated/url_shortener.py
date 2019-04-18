@@ -39,9 +39,10 @@ def gen_rand_url(longLink):
 				f = open("test.txt","a")
 				f.write("\n" + shortLink + "\t" + longLink) # write shortened and long url to test
 				f.close()
-				return shortLink
+				return 'www.membersonly.com' + shortLink
 	shortLink = find_by_line(check)[:16] # find the short url corresponding to the long one
-	return shortLink
+	return "www.membersonly.com/" + shortLink
+	#return shortLink
 
 def find_by_line(num):
 	with open("test.txt","r") as f:
@@ -76,6 +77,6 @@ def short_to_long(sUrl):
 			return lUrl
 	return default
 
-#print(gen_rand_url("www.moodle.umass.edu"))
-print(short_to_long('www.membersonly.com/SAgQoYRsvSKNVXwd'))
-print(validateShortenedURL('1234567812345679'))
+print(gen_rand_url("www.moodle.umass.edu"))
+#print(short_to_long('www.membersonly.com/SAgQoYRsvSKNVXwd'))
+#print(validateShortenedURL('1234567812345679'))
