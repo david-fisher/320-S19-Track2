@@ -1,5 +1,5 @@
 from PIL import Image
-from PIL import ImageFilter
+
 
 class sponsoredImageInsertion:
 
@@ -31,7 +31,7 @@ class sponsoredImageInsertion:
         # return the image with the sponsored content inserted
         return img_copy
 
-    def insertPNG(img, sponsored_item):
+    def insert_png(img, sponsored_item):
         # create a copy of the original image
         img_copy = img.copy()
 
@@ -56,7 +56,6 @@ class sponsoredImageInsertion:
         # return the image with the sponsored content inserted
         return img_copy
 
-
 def scale(width, height, factor):
     scaled_height = round(height * factor)
     scaled_width = round(width * factor)
@@ -71,7 +70,7 @@ if __name__ == '__main__':
    # new_img_one = sponsoredImageInsertion.insert(img, "pepsi")
     new_img_one = sponsoredImageInsertion.insert(img, "amazon")
     new_img_two = sponsoredImageInsertion.insert(img, "coca cola")
-    new_img_three = sponsoredImageInsertion.insertPNG(img, 'cokecan')
+    new_img_three = sponsoredImageInsertion.insert_png(img, 'cokecan')
 
 
     # Save the image file so that we can view it
