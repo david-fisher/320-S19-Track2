@@ -1,5 +1,6 @@
 import random, string
 
+
 # user inputs url, see if it's in the database
 def long_url_exists(lUrl):
 	f = open("test.txt","r")
@@ -15,6 +16,7 @@ def long_url_exists(lUrl):
 	f.close()
 	return exists
 
+
 def find_short_url(longLink):
 	errPage = "404.php" # edge case if short url doesn't exist
 	f = open("test.txt","r")
@@ -26,6 +28,7 @@ def find_short_url(longLink):
 			return sLink
 	f.close()
 	return errPage
+
 
 # generate random ascii string
 def gen_rand_url(longLink):
@@ -44,9 +47,11 @@ def gen_rand_url(longLink):
 	return "www.membersonly.com/" + shortLink
 	#return shortLink
 
+
 def find_by_line(num):
 	with open("test.txt","r") as f:
 		return f.read().split('\n')[num]
+
 
 # check if this hash is original (not in the db)
 def validateShortenedURL(link):
@@ -64,6 +69,8 @@ def validateShortenedURL(link):
 			valid = False
 	f.close()
 	return valid
+
+
 # redirect a user clicking a long url to a shortened one
 def short_to_long(sUrl):
 	default = '404.php' # if a user clicks on an invalid shortened url
