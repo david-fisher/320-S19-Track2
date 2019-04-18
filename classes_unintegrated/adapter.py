@@ -46,4 +46,3 @@ def get_original_image(image_id):
 def get_filtered_image(image_id):
     return
 
-def

@@ -3,64 +3,74 @@ from PIL import ImageFilter
 
 class sponsoredImageInsertion:
 
-    def scale(self, height, widht, factor):
-       #TODO: write code for scaling, aka return scaled height and width
-        return False
-
-    def insert(mg, sponsored_item):
-        # retrieve the width and height of the image for the scale
-
-
-        # create a scale for insert to be resized to
-
-
+    def insert(img, sponsored_item):
         # create a copy of the original image
         img_copy = img.copy()
 
         # retrieve the proper sponsored item insert
         insert = Image.open('sponsored_items/' + sponsored_item + '.jpg')
-        width, height = insert.size
-        width_scale = round(width * .2)
-        height_scale = round(height * .2)
-        print(width_scale)
-        print(height_scale)
-        # resize the sponsored item
-        insert = insert.resize((width_scale,height_scale))
 
-        for x in range(width_scale):
-            for y in range(height_scale):
+        # retrieve the width and height of the image for the scale
+        width, height = insert.size
+
+        # decide the factor by which we want to scale the insert
+        factor = .2
+
+        # create a scale for insert to be re-sized to
+        scaled_size = scale(width, height, factor)
+
+        # resize the sponsored item
+        insert = insert.resize(scaled_size)
+
+        # For each pixel, replace that pixel with the insert's pixel
+        for x in range(scaled_size[0]):
+            for y in range(scaled_size[1]):
                 pixel = insert.getpixel((x, y))
                 img_copy.putpixel((x, y), pixel)
 
         # return the image with the sponsored content inserted
         return img_copy
 
-    def insertPNG(mg, sponsored_item):
-        # retrieve the width and height of the image for the scale
-
-
+    def insertPNG(img, sponsored_item):
         # create a copy of the original image
         img_copy = img.copy()
 
         # retrieve the proper sponsored item insert
         insert = Image.open('sponsored_items/' + sponsored_item + '.png')
+
+        # retrieve the width and height of the image for the scale
         width, height = insert.size
-        width_scale = round(width * .2)
-        height_scale = round(height * .2)
-        print(width_scale)
-        print(height_scale)
+
+        # decide factor for which to scale the insert to
+        factor = .2
+
+        # create a scale for insert to be re-sized to
+        scaled_size = scale(width, height, factor)
+
         # resize the sponsored item
-        insert = insert.resize((width_scale, height_scale))
+        insert = insert.resize(scaled_size)
+
+        # in order to work with transparent photos
         data = insert.convert("RGBA")
         data = data.load()
-        for x in range(width_scale):
-            for y in range(height_scale):
+
+        # For each pixel that is not transparent, replace that pixel with the insert's pixel
+        for x in range(scaled_size[0]):
+            for y in range(scaled_size[1]):
                 if data[x, y][3] != 0:
                     pixel = insert.getpixel((x, y))
                     img_copy.putpixel((x, y), pixel)
 
         # return the image with the sponsored content inserted
         return img_copy
+
+
+def scale(width, height, factor):
+    scaled_height = round(height * factor)
+    scaled_width = round(width * factor)
+    return (scaled_width, scaled_height)
+
+
 # Main which is just here for testing
 if __name__ == '__main__':
     # Open the image file and read in its data so that we can access it
