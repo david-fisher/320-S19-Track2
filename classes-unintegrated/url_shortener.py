@@ -31,7 +31,7 @@ def find_short_url(longLink):
 
 
 # generate random ascii string
-def gen_rand_url(longLink):
+def get_short_url(longLink):
 	check = long_url_exists(longLink)
 	if(check == 0):
 		while(True):
@@ -72,7 +72,7 @@ def validateShortenedURL(link):
 
 
 # redirect a user clicking a long url to a shortened one
-def short_to_long(sUrl):
+def get_long_url(sUrl):
 	default = '404.php' # if a user clicks on an invalid shortened url
 	sLink = sUrl[20:] #www.membersonly.com/ spliced away
 	f = open("test.txt","r")
@@ -84,6 +84,6 @@ def short_to_long(sUrl):
 			return lUrl
 	return default
 
-print(gen_rand_url("www.umass.edu"))
-#print(short_to_long('www.membersonly.com/SAgQoYRsvSKNVXwd'))
+print(get_short_url("www.umass.edu"))
+print(get_long_url('www.membersonly.com/fQCPeau1TeR643Ft'))
 #print(validateShortenedURL('1234567812345679'))
