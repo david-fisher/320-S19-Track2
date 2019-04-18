@@ -56,6 +56,7 @@ class sponsoredImageInsertion:
         # return the image with the sponsored content inserted
         return img_copy
 
+
 def scale(width, height, factor):
     scaled_height = round(height * factor)
     scaled_width = round(width * factor)

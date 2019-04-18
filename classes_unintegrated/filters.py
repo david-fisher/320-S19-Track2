@@ -157,6 +157,17 @@ class Mirror:
 
         return img_copy
 
+# class Blur:
+#
+#     def filter(image):
+#         img_copy = img.copy()
+#         width, height = img.size
+#         clear_radius = width / 4
+#         img_copy = img_copy.filter(ImageFilter.BLUR)
+#         return img_copy
+#
+
+
 if __name__ == '__main__':
     # Open the image file and read in its data so that we can access it
     img = Image.open('../fisher.jpeg')
@@ -167,6 +178,7 @@ if __name__ == '__main__':
     new_img_four = Sepia.filter(img)
     new_img_five = Mirror.filter(img)
     new_img_six = Flip.filter(img)
+    new_img_seven = Blur.filter(img)
 
     new_img_one.save('club_filter.jpg')
     new_img_two.save('grayscale.jpg')
@@ -174,3 +186,4 @@ if __name__ == '__main__':
     new_img_four.save('sepia.jpg')
     new_img_five.save('mirror.jpg')
     new_img_six.save('flip.jpg')
+    new_img_seven.save('blur.jpg')
