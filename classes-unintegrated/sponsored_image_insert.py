@@ -3,22 +3,27 @@ from PIL import ImageFilter
 
 class sponsoredImageInsertion:
 
+    def scale(self, height, widht, factor):
+       #TODO: write code for scaling, aka return scaled height and width
+        return False
+
     def insert(mg, sponsored_item):
         # retrieve the width and height of the image for the scale
-        width, height = img.size
+
 
         # create a scale for insert to be resized to
-        width_scale = round(width/4)
-        height_scale = round(height/4)
-        print(width_scale)
-        print(height_scale)
+
 
         # create a copy of the original image
         img_copy = img.copy()
 
         # retrieve the proper sponsored item insert
         insert = Image.open('sponsored_items/' + sponsored_item + '.jpg')
-
+        width, height = insert.size
+        width_scale = round(width * .2)
+        height_scale = round(height * .2)
+        print(width_scale)
+        print(height_scale)
         # resize the sponsored item
         insert = insert.resize((width_scale,height_scale))
 
@@ -32,20 +37,18 @@ class sponsoredImageInsertion:
 
     def insertPNG(mg, sponsored_item):
         # retrieve the width and height of the image for the scale
-        width, height = img.size
 
-        # create a scale for insert to be resized to
-        width_scale = round(width / 4)
-        height_scale = round(height / 4)
-        print(width_scale)
-        print(height_scale)
 
         # create a copy of the original image
         img_copy = img.copy()
 
         # retrieve the proper sponsored item insert
         insert = Image.open('sponsored_items/' + sponsored_item + '.png')
-
+        width, height = insert.size
+        width_scale = round(width * .2)
+        height_scale = round(height * .2)
+        print(width_scale)
+        print(height_scale)
         # resize the sponsored item
         insert = insert.resize((width_scale, height_scale))
         data = insert.convert("RGBA")
@@ -72,4 +75,4 @@ if __name__ == '__main__':
     # Save the image file so that we can view it
     new_img_one.save('amazon pic.jpg')
     new_img_two.save('coca cola pic.jpg')
-    new_img_three.save('coke can.png')
+    new_img_three.save('coke can.jpg')
