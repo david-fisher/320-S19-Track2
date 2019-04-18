@@ -67,8 +67,15 @@ def validateShortenedURL(link):
 def short_to_long(sUrl):
 	default = '404.php' # if a user clicks on an invalid shortened url
 	sLink = sUrl[20:] #www.membersonly.com/ spliced away
-	return find_by_line(validateShortenedURL(sLink))[17:]
+	f = open("test.txt","r")
+	for x in f:
+		link16 = x[:16]
+		lUrl = x[17:]
+		print('comparing ' + link16 + " and " + sLink)
+		if(link16 == sLink):
+			return lUrl
+	return default
 
-print(gen_rand_url("www.moodle.umass.edu"))
-print(short_to_long('SAgQoYRsvSKNVXwd'))
+#print(gen_rand_url("www.moodle.umass.edu"))
+print(short_to_long('www.membersonly.com/SAgQoYRsvSKNVXwd'))
 print(validateShortenedURL('1234567812345679'))
