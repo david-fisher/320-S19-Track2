@@ -50,16 +50,8 @@ class sponsoredImageInsertion:
         # resize the sponsored item
         insert = insert.resize(scaled_size)
 
-        # in order to work with transparent photos
-        data = insert.convert("RGBA")
-        data = data.load()
-
-        # For each pixel that is not transparent, replace that pixel with the insert's pixel
-        for x in range(scaled_size[0]):
-            for y in range(scaled_size[1]):
-                if data[x, y][3] != 0:
-                    pixel = insert.getpixel((x, y))
-                    img_copy.putpixel((x, y), pixel)
+        # paste the insert over the image
+        img_copy.paste(insert, (0, 0), insert)
 
         # return the image with the sponsored content inserted
         return img_copy
