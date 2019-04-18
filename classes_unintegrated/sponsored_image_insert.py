@@ -22,11 +22,11 @@ class sponsoredImageInsertion:
         # resize the sponsored item
         insert = insert.resize(scaled_size)
 
-        # For each pixel, replace that pixel with the insert's pixel
-        for x in range(scaled_size[0]):
-            for y in range(scaled_size[1]):
-                pixel = insert.getpixel((x, y))
-                img_copy.putpixel((x, y), pixel)
+        # decide where the upper left corner of the insert should be
+        insert_place = (0, 0)
+
+        # paste the insert into the image at insert_place
+        img_copy.paste(insert, insert_place)
 
         # return the image with the sponsored content inserted
         return img_copy
