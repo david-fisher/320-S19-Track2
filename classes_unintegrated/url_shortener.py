@@ -8,18 +8,6 @@ def long_url_exists(lUrl):
     return Adapter.check_long_url(lUrl)
 
 
-def find_short_url(longLink):
-	errPage = "404.php" # edge case if short url doesn't exist
-	f = open("test.txt","r")
-	for x in f:
-		sLink = x[:16]
-		lLink = x[17:]
-		if(lLink == longLink):
-			f.close()
-			return sLink
-	f.close()
-	return errPage
-
 # generate random ascii string
 def create_short_url(longLink):
     shortLink = ''.join(
@@ -38,11 +26,6 @@ def get_short_url(longLink):
         return Adapter.get_short_url(longLink)
     else:
         return create_short_url(longLink)
-
-
-def find_by_line(num):
-	with open("test.txt","r") as f:
-		return f.read().split('\n')[num]
 
 
 # redirect a user clicking a long url to a shortened one

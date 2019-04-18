@@ -1,4 +1,9 @@
 # GET request to check if short_url exists
+
+test_database = {"www.google.com": "1LfIc2e5AGfyMCZ5",
+                 "www.moodle.umass.edu": "SAgQoYRsvSKNVXwd",
+                 "www.umass.edu": "fQCPeau1TeR643Ft"}
+
 def check_short_url(short_url):
     return None
 
