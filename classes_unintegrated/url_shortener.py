@@ -22,16 +22,13 @@ def find_short_url(longLink):
 
 # generate random ascii string
 def create_short_url(longLink):
-    while (True):
+    shortLink = ''.join(
+        random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(16))
+    # check if it is within the text file
+    while Adapter.check_short_url(shortLink):
         shortLink = ''.join(
             random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(16))
-        # print(x);
-        # check if it is within the text file
-        if (validateShortenedURL(shortLink)):
-            f = open("test.txt", "a")
-            f.write("\n" + shortLink + "\t" + longLink)  # write shortened and long url to test
-            f.close()
-            return 'www.membersonly.com/' + shortLink
+    return shortLink
 
 
 # retrieve short_url
@@ -46,24 +43,6 @@ def get_short_url(longLink):
 def find_by_line(num):
 	with open("test.txt","r") as f:
 		return f.read().split('\n')[num]
-
-
-# check if this hash is original (not in the db)
-def validateShortenedURL(link):
-	#link16 = link[:16]
-	#print(link16)
-	valid = True
-	f = open("test.txt","r")
-	for x in f:
-		#print(x)
-		link16 = x[:16]
-		#print(link16)
-		#print(link)
-		#print("comparing " + link16 + " and " + link)
-		if(link16 == link):
-			valid = False
-	f.close()
-	return valid
 
 
 # redirect a user clicking a long url to a shortened one
