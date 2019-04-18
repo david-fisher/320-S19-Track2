@@ -20,23 +20,27 @@ def find_short_url(longLink):
 	f.close()
 	return errPage
 
-
 # generate random ascii string
+def create_short_url(longLink):
+    while (True):
+        shortLink = ''.join(
+            random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(16))
+        # print(x);
+        # check if it is within the text file
+        if (validateShortenedURL(shortLink)):
+            f = open("test.txt", "a")
+            f.write("\n" + shortLink + "\t" + longLink)  # write shortened and long url to test
+            f.close()
+            return 'www.membersonly.com/' + shortLink
+
+
+# retrieve short_url
 def get_short_url(longLink):
-	check = long_url_exists(longLink)
-	if(check == 0):
-		while(True):
-			shortLink = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(16))
-			# print(x);
-			# check if it is within the text file
-			if(validateShortenedURL(shortLink)):
-				f = open("test.txt","a")
-				f.write("\n" + shortLink + "\t" + longLink) # write shortened and long url to test
-				f.close()
-				return 'www.membersonly.com/' + shortLink
-	shortLink = find_by_line(check)[:16] # find the short url corresponding to the long one
-	return "www.membersonly.com/" + shortLink
-	#return shortLink
+    check = long_url_exists(longLink)
+    if check:
+        return Adapter.get_short_url(longLink)
+    else:
+        return create_short_url(longLink)
 
 
 def find_by_line(num):

@@ -11,3 +11,8 @@ def check_long_url(long_url):
 # GET request to get long_url by short_url
 def get_long_url(short_url):
     return None
+
+
+# GET request to get short_url by long_url
+def get_short_url(long_url):
+    return None
