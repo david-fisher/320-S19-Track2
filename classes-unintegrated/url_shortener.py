@@ -8,7 +8,7 @@ def long_url_exists(lUrl):
 	for x in f:
 		# for each line in the file, check the long url
 		cmp = x[17:]
-		print('comparing ' + cmp + " to " + lUrl)
+		#print('comparing ' + cmp + " to " + lUrl)
 		if(cmp == lUrl):
 			exists = lncnt
 		lncnt = lncnt + 1
@@ -39,7 +39,7 @@ def gen_rand_url(longLink):
 				f = open("test.txt","a")
 				f.write("\n" + shortLink + "\t" + longLink) # write shortened and long url to test
 				f.close()
-				return 'www.membersonly.com' + shortLink
+				return 'www.membersonly.com/' + shortLink
 	shortLink = find_by_line(check)[:16] # find the short url corresponding to the long one
 	return "www.membersonly.com/" + shortLink
 	#return shortLink
@@ -72,11 +72,11 @@ def short_to_long(sUrl):
 	for x in f:
 		link16 = x[:16]
 		lUrl = x[17:]
-		print('comparing ' + link16 + " and " + sLink)
+		#print('comparing ' + link16 + " and " + sLink)
 		if(link16 == sLink):
 			return lUrl
 	return default
 
-print(gen_rand_url("www.moodle.umass.edu"))
+print(gen_rand_url("www.umass.edu"))
 #print(short_to_long('www.membersonly.com/SAgQoYRsvSKNVXwd'))
 #print(validateShortenedURL('1234567812345679'))
