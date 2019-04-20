@@ -7,10 +7,5 @@ class EditComment:
         new_comment = original_comment + edit
         DBAdapter.store_comment(new_comment)
 
-    def get_original_comment(comment_id):
-        // TODO
-
-    def get_edited_comment(comment_id):
-        // TODO
 
 
