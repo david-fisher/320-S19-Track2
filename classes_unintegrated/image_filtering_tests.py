@@ -1,8 +1,10 @@
-import unittest
-from PIL import Image
-from image_handler import ImageFilterHandler
-import filters
 import os
+import unittest
+
+from PIL import Image
+
+import classes_unintegrated.filters as filters
+import classes_unintegrated.image_handler as ImageFilterHandler
 
 MANUAL_CHECK = True
 

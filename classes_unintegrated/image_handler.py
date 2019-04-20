@@ -2,9 +2,8 @@ import inspect
 from os import listdir
 from os.path import isfile, join
 
-import filters
-
 import classes_unintegrated.adapter as DBAdapter
+import classes_unintegrated.filters as filters
 
 items_dir_path = 'sponsored_items'
 
