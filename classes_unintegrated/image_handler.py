@@ -1,10 +1,10 @@
-from PIL import Image
 import inspect
 from os import listdir
 from os.path import isfile, join
 
-import adapter
 import filters
+
+import classes_unintegrated.adapter as DBAdapter
 
 items_dir_path = 'sponsored_items'
 
@@ -42,7 +42,7 @@ class ImageFilterHandler:
         pass
 
     def __save_image(self, image):
-        adapter.store_image(image)
+        DBAdapter.store_image(image)
 
 
 if __name__ == '__main__':
