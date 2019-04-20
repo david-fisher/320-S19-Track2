@@ -8,6 +8,7 @@ class ClubFilter:
     filter_preview_url = ""
 
     # Filter method
+    @staticmethod
     def filter(img):
         # Retrieve the width and height of the image
         width, height = img.size
@@ -33,6 +34,7 @@ class Grayscale:
     filter_preview_url = ""
 
     # Filter method
+    @staticmethod
     def filter(img):
         # Retrieve the width and height of the image
         width, height = img.size
@@ -59,6 +61,7 @@ class Negative:
     filter_preview_url = ""
 
     # Filter method
+    @staticmethod
     def filter(img):
         # Retrieve the width and height of the image
         width, height = img.size
@@ -83,6 +86,7 @@ class Sepia:
     filter_preview_url = ""
 
     # Filter method
+    @staticmethod
     def filter(img):
         # Retrieve the width and height of the image
         width, height = img.size
@@ -116,6 +120,7 @@ class Flip:
     filter_preview_url = ""
 
     # Filter method
+    @staticmethod
     def filter(img):
         # Retrieve the width and height of the image
         width, height = img.size
@@ -140,6 +145,7 @@ class Mirror:
     filter_preview_url = ""
 
     # Filter method
+    @staticmethod
     def filter(img):
         # Retrieve the width and height of the image
         width, height = img.size
