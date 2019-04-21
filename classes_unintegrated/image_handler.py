@@ -2,9 +2,10 @@ from PIL import Image
 import inspect
 from os import listdir
 from os.path import isfile, join
+import re
 
 import adapter
-import filters
+import filters as filters
 
 items_dir_path = 'sponsored_items'
 
@@ -19,13 +20,26 @@ class ImageFilterHandler:
     modified_image = ""
     done_by_admin = False
 
-    def get_filters(self):
+    @staticmethod
+    def get_filters():
         # Currently only returns a list of filter names
-        return self.filters
+        def f_info(f):
+            name = re.sub('([a-z])([A-Z])', '\g<1> \g<2>', f)
+            return name, f
 
-    def get_sponsored_items(self):
+        f_info_list = list(map(f_info, ImageFilterHandler.filters))
+        return f_info_list
+
+    @staticmethod
+    def get_sponsored_items():
         # Currently only returns a list of sponsored item names
-        return self.sponsored_items
+        def item_info(i):
+            name = re.sub('(\.[a-z]*)', '', i)
+            name = name.title()
+            return name, i
+
+        item_info_list = list(map(item_info, ImageFilterHandler.sponsored_items))
+        return item_info_list
 
     @staticmethod
     def apply_filter(image, filter_id, *args):
@@ -48,9 +62,10 @@ class ImageFilterHandler:
 if __name__ == '__main__':
     print([f[0] for f in inspect.getmembers(filters, inspect.isclass) if f[1].__module__ == filters.__name__])
     print(ImageFilterHandler.filters)
+    print()
     print(ImageFilterHandler.sponsored_items)
-
-    # img = Image.open('../fisher.jpeg')
-    # new_img_one = ImageFilterHandler.apply_filter(img, 'ClubFilter')
-    # new_img_one.save('club_filter.jpg')
+    print()
+    print(ImageFilterHandler.get_sponsored_items())
+    print()
+    print(ImageFilterHandler.get_filters())
 

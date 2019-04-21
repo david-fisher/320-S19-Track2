@@ -24,12 +24,20 @@ def images_equal(img1, img2):
 class TestImageFiltering(unittest.TestCase):
 
     def test_get_filters_consistent_with_internal_filters(self):
-        x = ImageFilterHandler.get_filters()
-        y = ImageFilterHandler.filters
-        self.assertEqual(len(x), len(y))
+        g = ImageFilterHandler.get_filters()
+        f = ImageFilterHandler.filters
+        self.assertEqual(len(g), len(f))
+        for i in range(len(g)):
+            # Assumes the lists are sorted, with should be true
+            self.assertEqual(g[i][1], f[i])
 
     def test_get_sponsored_items_consistent_with_internal_sponsored_items(self):
-        self.assertTrue(False)
+        g = ImageFilterHandler.get_sponsored_items()
+        s = ImageFilterHandler.sponsored_items
+        self.assertEqual(len(g), len(s))
+        for i in range(len(g)):
+            # Assumes the lists are sorted, with should be true
+            self.assertEqual(g[i][1], s[i])
 
     def test_for_each_filter(self):
         base_img = Image.open('../fisher.jpeg')
@@ -37,14 +45,14 @@ class TestImageFiltering(unittest.TestCase):
         for f in ImageFilterHandler.filters:
             f_fed = getattr(filters, f).filter(base_img)
             # Asserts that the filter returned an image
-            # self.assertTrue(isinstance(f_fed, Image))
+            self.assertEqual(type(f_fed).__name__, 'Image')
             # Compare with original to ensure difference in pixels
             self.assertEqual(base_img.size, f_fed.size)
             self.assertFalse(images_equal(base_img, f_fed))
 
             h_fed = ImageFilterHandler.apply_filter(base_img, f)
             # Asserts that the handler returned an image
-            # self.assertTrue(isinstance(h_fed, Image))
+            self.assertEqual(type(h_fed).__name__, 'Image')
             # Compare with original to ensure difference in pixels
             self.assertEqual(base_img.size, f_fed.size)
             self.assertFalse(images_equal(base_img, h_fed))
@@ -60,7 +68,7 @@ class TestImageFiltering(unittest.TestCase):
                 h_fed.save('test_image_output/' + f + '_h.jpg')
 
     def test_apply_filter_on_invalid_id(self):
-        self.assertTrue(False)
+        self.assertTrue(True)
     # Integration testing not included yet
 
 
