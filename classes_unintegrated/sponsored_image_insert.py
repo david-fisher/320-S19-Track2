@@ -1,7 +1,7 @@
 from PIL import Image
 
 
-class sponsoredImageInsertion:
+class SponsoredImageInsertion:
 
     def insert(img, sponsored_item):
         # create a copy of the original image
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     # Open the image file and read in its data so that we can access it
     img = Image.open('../fisher.jpeg')
 
-   # new_img_one = sponsoredImageInsertion.insert(img, "pepsi")
+    # new_img_one = sponsoredImageInsertion.insert(img, "pepsi")
     new_img_one = sponsoredImageInsertion.insert(img, "amazon")
     new_img_two = sponsoredImageInsertion.insert(img, "coca cola")
     new_img_three = sponsoredImageInsertion.insert_png(img, 'cokecan')
