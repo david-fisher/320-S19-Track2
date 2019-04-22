@@ -1,6 +1,7 @@
 from django.test import TestCase
-from database.models import Member
-# Create your tests here.
+from database.models import Member, Post, Comment, CreditCard, Image, Filter
+import tempfile
+
 
 class MemberTestCase(TestCase): 
 
@@ -75,5 +76,201 @@ class MemberTestCase(TestCase):
 
         # Idol Invited Member
         self.assertEqual("idol",who_invited_member)
-  
+
+class PostTestCase(TestCase): 
+
+    def create_member(self,name,invitedby=None):
+        return Member.objects.create(visibility=True,
+                                    invitedby= invitedby,
+                                    email="email@email.com",
+                                    password="pwd",
+                                    username=name,
+                                    points="10",
+                                    user_type="Member",
+                                    is_verified=True,
+                                    birthday="19980903",
+                                    address="earth")
+
+    def create_post(self,content,user=None):
+        return Post.objects.create(user = user,
+                                   urls    = "www.test.com",
+                                   is_flagged = False,
+                                   content = content,
+                                   by_admin = False)
+
+    # Test creating an Post object
+    def test_create(self):
+        new_member = self.create_member("new-user")
+        new_post = self.create_post("hello",new_member)
+        self.assertTrue(isinstance(new_post, Post))
+        # since we created a new post, the number should increase to 1
+        self.assertEqual(Post.objects.count(),1)
+    
+    # Who wrote this post?
+    def test_writer(self):
+        new_member = self.create_member("new-user")
+        new_post = self.create_post("hello",new_member)
+        writer_id = new_post.data()['user_id']
+        writer_name = Member.objects.get(id=writer_id).data()['username']
+        self.assertEqual("new-user",writer_name)
+
+class CommentTestCase(TestCase): 
+
+    def create_member(self,name,invitedby=None):
+        return Member.objects.create(visibility=True,
+                                    invitedby= invitedby,
+                                    email="email@email.com",
+                                    password="pwd",
+                                    username=name,
+                                    points="10",
+                                    user_type="Member",
+                                    is_verified=True,
+                                    birthday="19980903",
+                                    address="earth")
+    
+    def create_post(self,content,user=None):
+        return Post.objects.create(user = user,
+                                   urls    = "www.test.com",
+                                   is_flagged = False,
+                                   content = content,
+                                   by_admin = False)
+    
+    def create_comment(self,content,user,post,replies=None):
+        return Comment.objects.create(user = user,
+                                      post = post,
+                                      replies = replies,
+                                      content = content,
+                                      by_admin = False)
+                                      
+    def test_create(self):
+        new_member = self.create_member("new-user")
+        coment_user = self.create_member("comment-user")
+        new_post = self.create_post("hello",new_member)
+        new_comment = self.create_comment("this is a comment",coment_user,new_post)
+        self.assertTrue(isinstance(new_comment, Comment))
+        # since we created a new post, the number should increase to 1
+        self.assertEqual(Comment.objects.count(),1)
+    
+    # Check linked Post
+    def test_create(self):
+        new_member = self.create_member("new-user")
+        coment_user = self.create_member("comment-user")
+        new_post = self.create_post("hello",new_member)
+        new_comment = self.create_comment("this is a comment",coment_user,new_post)
+        
+        post_id = new_comment.data()['post_id']
+        post_content = Post.objects.get(id=post_id).data()['content']
+
+        self.assertEqual("hello",post_content)
+
+class CreditCardTestCase(TestCase): 
+
+    def create_member(self,name,invitedby=None):
+        return Member.objects.create(visibility=True,
+                                    invitedby= invitedby,
+                                    email="email@email.com",
+                                    password="pwd",
+                                    username=name,
+                                    points="10",
+                                    user_type="Member",
+                                    is_verified=True,
+                                    birthday="19980903",
+                                    address="earth")
+    
+    def create_card(self,user):
+        return CreditCard.objects.create(user=user,
+                                         card_num="0000111122223333",
+                                         cvv="123",
+                                         holder_name="test-user",
+                                         card_expiration="20201012",
+                                         currently_used=True,
+                                         address="earth",
+                                         zipcode=10001)
+    def test_create(self):
+        new_member = self.create_member("new-user")
+        new_card = self.create_card(new_member)
+        self.assertTrue(isinstance(new_card, CreditCard))
+        # since we created a new post, the number should increase to 1
+        self.assertEqual(CreditCard.objects.count(),1)
+                                
+
+class ImageTestCase(TestCase): 
+
+    def create_member(self,name,invitedby=None):
+        return Member.objects.create(visibility=True,
+                                    invitedby= invitedby,
+                                    email="email@email.com",
+                                    password="pwd",
+                                    username=name,
+                                    points="10",
+                                    user_type="Member",
+                                    is_verified=True,
+                                    birthday="19980903",
+                                    address="earth")
+    
+    def create_post(self,content,user=None):
+        return Post.objects.create(user = user,
+                                   urls    = "www.test.com",
+                                   is_flagged = False,
+                                   content = content,
+                                   by_admin = False)
+
+    def create_image(self,user,post,image):
+        return Image.objects.create(user = user,
+                                    post = post,
+                                    current_image=image,
+                                    is_flagged = False,
+                                    by_admin = False )
+
+    def test_create(self):
+        new_member = self.create_member("new-user")
+        new_post = self.create_post("hello",new_member)
+        image = tempfile.NamedTemporaryFile(suffix=".jpg").name
+        new_image = self.create_image(new_member,new_post,image)
+        self.assertTrue(isinstance(new_image, Image))
+        self.assertEqual(Image.objects.count(),1)    
+
+class FilterTestCase(TestCase): 
+
+    def create_member(self,name,invitedby=None):
+        return Member.objects.create(visibility=True,
+                                    invitedby= invitedby,
+                                    email="email@email.com",
+                                    password="pwd",
+                                    username=name,
+                                    points="10",
+                                    user_type="Member",
+                                    is_verified=True,
+                                    birthday="19980903",
+                                    address="earth")
+    
+    def create_post(self,content,user=None):
+        return Post.objects.create(user = user,
+                                   urls    = "www.test.com",
+                                   is_flagged = False,
+                                   content = content,
+                                   by_admin = False)
+
+    def create_image(self,user,post,image):
+        return Image.objects.create(user = user,
+                                    post = post,
+                                    current_image=image,
+                                    is_flagged = False,
+                                    by_admin = False )
+    
+    def create_filter(self,image):
+        return Filter.objects.create(image=image,filter_name="test-filter")
+
+    def test_create(self):
+        new_member = self.create_member("new-user")
+        new_post = self.create_post("hello",new_member)
+        image = tempfile.NamedTemporaryFile(suffix=".jpg").name
+        new_image = self.create_image(new_member,new_post,image)
+        new_filter = self.create_filter(new_image)
+
+        self.assertTrue(isinstance(new_filter,Filter))
+        self.assertEqual(Filter.objects.count(),1) 
+          
+       
+
     
