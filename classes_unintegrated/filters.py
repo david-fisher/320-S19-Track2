@@ -4,7 +4,7 @@ from PIL import Image
 class ClubFilter:
 
     # Class' attributes
-    filter_name = "club_filter"
+    filter_name = "Club"
     filter_preview_url = ""
 
     # Filter method
@@ -30,7 +30,7 @@ class ClubFilter:
 class Grayscale:
 
     # Class attributes
-    filter_name = "grayscale"
+    filter_name = "Grayscale"
     filter_preview_url = ""
 
     # Filter method
@@ -57,7 +57,7 @@ class Grayscale:
 class Negative:
 
     # Class' attributes
-    filter_name = "negative"
+    filter_name = "Negative"
     filter_preview_url = ""
 
     # Filter method
@@ -79,10 +79,11 @@ class Negative:
 
         return img_copy
 
+
 class Sepia:
 
     # Class' attributes
-    filter_name = "sepia"
+    filter_name = "Sepia"
     filter_preview_url = ""
 
     # Filter method
@@ -116,7 +117,7 @@ class Sepia:
 class Flip:
 
     # Class' attributes
-    filter_name = "flip"
+    filter_name = "Flip"
     filter_preview_url = ""
 
     # Filter method
@@ -141,7 +142,7 @@ class Flip:
 class Mirror:
 
     # Class' attributes
-    filter_name = "mirror"
+    filter_name = "Mirror"
     filter_preview_url = ""
 
     # Filter method
