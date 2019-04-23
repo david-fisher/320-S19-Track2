@@ -65,8 +65,17 @@ class ImageFilterHandler:
             print('invalid filter_id')
             return "uh oh, should probably do something about this"
 
-    def remove_filters(self, image):
-        # todo: Check User Stories for exact functionality
+    def remove_filters(self, image_id, bad_filter):
+        # todo: do this stuff
+        # if not image_id.filters:
+        #     return "No can do"
+        # else:
+        #     original = image_id.parent
+        #     applied_filters = image_id.filters
+        #     for each filter in applied_filters:
+        #         if filter != bad_filter:
+        #             original = apply_filter(original, filter)
+        #     put(original, image_id)
         pass
 
     def __save_image(self, image):
