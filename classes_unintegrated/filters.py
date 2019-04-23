@@ -1,91 +1,14 @@
-from __future__ import unicode_literals
-
-from django.db import models
-from django.contrib.auth.models import AbstractUser
-
 from PIL import Image
-from PIL import ImageFilter
 
-
-class Photo(models.Model):
-    file = models.FileField(upload_to='uploads/%Y/%m/%d/')
-
-
-class User(AbstractUser):
-    """
-    Defines the attributes of a User.
-    """
-
-    # ManyToManyField models an array in this case. Many users could block many Members could block the same Members.
-    # Because the ManyToManyField refers to a Member blocking Members, we use "self".
-    blocked_members = models.ManyToManyField("self", blank=True, )
-
-    address = models.TextField(default="")
-    points_balance = models.IntegerField(default=0)
-    stripe_card = models.CharField(max_length=100, default="")
-    reset_code = models.CharField(max_length=10, default="")
-
-
-class Post(models.Model):
-    """
-    Post inherits from a base model.
-    """
-
-    # When the User owning the post is deleted (on_delete), we want to delete all posts associated with that User.
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    body = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, blank=True, null=True)
-
-
-class Comment(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    parent_post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    body = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-
-class ShortLink(models.Model):
-    originalURL = models.URLField()
-    short_token = models.CharField(max_length=10)
-
-class sponsoredImageInsertion:
-
-    def insert(mg, sponsored_item):
-        # retrieve the width and height of the image for the scale
-        width, height = img.size
-
-        # create a scale for insert to be resized to
-        width_scale = round(width/4)
-        height_scale = round(height/4)
-        print(width_scale)
-        print(height_scale)
-
-        # create a copy of the original image
-        img_copy = img.copy()
-
-        # retrieve the proper sponsored item insert
-        insert = Image.open('sponsored_items/' + sponsored_item + '.jpg')
-
-        # resize the sponsored item
-        insert = insert.resize((width_scale,height_scale))
-
-        for x in range(width_scale):
-            for y in range(height_scale):
-                pixel = insert.getpixel((x, y))
-                img_copy.putpixel((x, y), pixel)
-
-        # return the image with the sponsored content inserted
-        return img_copy
 
 class ClubFilter:
 
     # Class' attributes
-    filter_name = "club_filter"
+    filter_name = "Club"
     filter_preview_url = ""
 
     # Filter method
+    @staticmethod
     def filter(img):
         # Retrieve the width and height of the image
         width, height = img.size
@@ -107,10 +30,11 @@ class ClubFilter:
 class Grayscale:
 
     # Class attributes
-    filter_name = "grayscale"
+    filter_name = "Grayscale"
     filter_preview_url = ""
 
     # Filter method
+    @staticmethod
     def filter(img):
         # Retrieve the width and height of the image
         width, height = img.size
@@ -133,10 +57,11 @@ class Grayscale:
 class Negative:
 
     # Class' attributes
-    filter_name = "negative"
+    filter_name = "Negative"
     filter_preview_url = ""
 
     # Filter method
+    @staticmethod
     def filter(img):
         # Retrieve the width and height of the image
         width, height = img.size
@@ -154,13 +79,15 @@ class Negative:
 
         return img_copy
 
+
 class Sepia:
 
     # Class' attributes
-    filter_name = "sepia"
+    filter_name = "Sepia"
     filter_preview_url = ""
 
     # Filter method
+    @staticmethod
     def filter(img):
         # Retrieve the width and height of the image
         width, height = img.size
@@ -186,3 +113,84 @@ class Sepia:
                 img_copy.putpixel((x,y), (int(sepiaR), int(sepiaG), int(sepiaB)))
 
         return img_copy
+
+class Flip:
+
+    # Class' attributes
+    filter_name = "Flip"
+    filter_preview_url = ""
+
+    # Filter method
+    @staticmethod
+    def filter(img):
+        # Retrieve the width and height of the image
+        width, height = img.size
+
+        # Create a copy of the original image
+        img_copy = img.copy()
+
+        # Two for loops in order to change each pixel
+        for x in range(width):
+            for y in range(height):
+                # Take the pixel at (x, y)
+                r, g, b = img.getpixel((width-x-1, y))
+                # Subtract the r g b values from 255 in order to get the inverted values
+                img_copy.putpixel((x, y), (r, g, b))
+
+        return img_copy
+
+class Mirror:
+
+    # Class' attributes
+    filter_name = "Mirror"
+    filter_preview_url = ""
+
+    # Filter method
+    @staticmethod
+    def filter(img):
+        # Retrieve the width and height of the image
+        width, height = img.size
+
+        # Create a copy of the original image
+        img_copy = img.copy()
+
+        # Two for loops in order to change each pixel
+        for x in range(width//2):
+            for y in range(height):
+                # Take the pixel at (x, y)
+                r, g, b = img.getpixel((width-x-1, y))
+                # Subtract the r g b values from 255 in order to get the inverted values
+                img_copy.putpixel((x, y), (r, g, b))
+
+        return img_copy
+
+# class Blur:
+#
+#     def filter(image):
+#         img_copy = img.copy()
+#         width, height = img.size
+#         clear_radius = width / 4
+#         img_copy = img_copy.filter(ImageFilter.BLUR)
+#         return img_copy
+#
+
+
+if __name__ == '__main__':
+    # Open the image file and read in its data so that we can access it
+    img = Image.open('../fisher.jpeg')
+
+    new_img_one = ClubFilter.filter(img)
+    new_img_two = Grayscale.filter(img)
+    new_img_three = Negative.filter(img)
+    new_img_four = Sepia.filter(img)
+    new_img_five = Mirror.filter(img)
+    new_img_six = Flip.filter(img)
+    new_img_seven = Blur.filter(img)
+
+    new_img_one.save('club_filter.jpg')
+    new_img_two.save('grayscale.jpg')
+    new_img_three.save('negative.jpg')
+    new_img_four.save('sepia.jpg')
+    new_img_five.save('mirror.jpg')
+    new_img_six.save('flip.jpg')
+    new_img_seven.save('blur.jpg')
