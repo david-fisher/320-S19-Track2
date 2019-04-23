@@ -1,6 +1,6 @@
 # How to add postgreSQL into Django
 
-## Initial Configuration
+## 1. Create Database
 Run postgresql server
 ```
 psql postgres
@@ -20,8 +20,12 @@ Quit postgresql server
 ```
 \q
 ```
+open up your database
+```
+psql membersonly
+```
 
-## Edit setting.py in Django
+## 2. Edit setting.py in Django
 ```
 DATABASES = {
     'default': {
@@ -35,18 +39,12 @@ DATABASES = {
 }
 ```
 
+## 3. migrate
+```
+python manage.py makemigrations
+python manage.py migrate
+```
 ## Open up the database
 ```
 psql membersonly
-```
-
-
-## Useful command 
-Show all databse
-```
-\l
-```
-Drop a database
-```
-DROP DATABASE [databas-name]
 ```
