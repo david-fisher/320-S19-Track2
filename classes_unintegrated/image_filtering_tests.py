@@ -3,8 +3,8 @@ import unittest
 
 from PIL import Image
 
-import classes_unintegrated.filters as filters
-import classes_unintegrated.image_handler as ImageFilterHandler
+import filters
+from image_handler import ImageFilterHandler
 
 MANUAL_CHECK = True
 
