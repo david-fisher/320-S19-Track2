@@ -26,6 +26,7 @@ def images_equal(img1, img2):
 class TestImageFiltering(unittest.TestCase):
 
     def test_get_filters_consistent_with_internal_filters(self):
+        # todo: Unserialize the proper return on get_filters()
         g = ImageFilterHandler.get_filters()
         f = ImageFilterHandler.filters
         self.assertEqual(len(g), len(f))
@@ -34,6 +35,7 @@ class TestImageFiltering(unittest.TestCase):
             self.assertEqual(g[i][1], f[i])
 
     def test_get_sponsored_items_consistent_with_internal_sponsored_items(self):
+        # todo: Unserialize the proper return on get_sponsored_items()
         g = ImageFilterHandler.get_sponsored_items()
         s = ImageFilterHandler.sponsored_items
         self.assertEqual(len(g), len(s))

@@ -37,6 +37,7 @@ class ImageFilterHandler:
             return name, f, preview_loc
 
         f_info_list = list(map(f_info, ImageFilterHandler.filters))
+        # todo: First pass list through serializer
         return f_info_list
 
     @staticmethod
@@ -48,20 +49,24 @@ class ImageFilterHandler:
             return name, i, item_loc
 
         item_info_list = list(map(item_info, ImageFilterHandler.sponsored_items))
+        # todo: First pass list through serializer
         return item_info_list
 
     @staticmethod
-    def apply_filter(image, filter_id, *args):
+    def apply_filter(image, filter_id, *args):  # todo: Should take in arguments needed to post
         # Eventually should be implemented with filter list from DB
         if hasattr(filters, filter_id):
             filter_class = getattr(filters, filter_id)
-            return filter_class.filter(image)
+            filtered_image = filter_class.filter(image)
+            # todo: Post the filtered image
+            return filtered_image
         else:
             # invalid filter_id
             print('invalid filter_id')
             return "uh oh, should probably do something about this"
 
     def remove_filters(self, image):
+        # todo: Check User Stories for exact functionality
         pass
 
     def __save_image(self, image):
