@@ -23,8 +23,18 @@ class ImageFilterHandler:
     def get_filters():
         # Currently only returns a list of filter names
         def f_info(f):
-            name = re.sub('([a-z])([A-Z])', '\g<1> \g<2>', f)
-            return name, f
+            # Try pulling the name from the filter class
+            try:
+                name = getattr(filters, f).filter_name
+            except AttributeError:
+                name = re.sub('([a-z])([A-Z])', '\g<1> \g<2>', f)
+            # Try pulling the preview_url from the filter class
+            try:
+                preview_loc = getattr(filters, f).filter_preview_url
+            except AttributeError:
+                preview_loc = re.sub('([a-z])([A-Z])', '\g<1> \g<2>', f)
+
+            return name, f, preview_loc
 
         f_info_list = list(map(f_info, ImageFilterHandler.filters))
         return f_info_list
@@ -33,9 +43,9 @@ class ImageFilterHandler:
     def get_sponsored_items():
         # Currently only returns a list of sponsored item names
         def item_info(i):
-            name = re.sub('(\.[a-z]*)', '', i)
-            name = name.title()
-            return name, i
+            name = re.sub('(\.[a-z]*)', '', i).title()
+            item_loc = ''
+            return name, i, item_loc
 
         item_info_list = list(map(item_info, ImageFilterHandler.sponsored_items))
         return item_info_list
