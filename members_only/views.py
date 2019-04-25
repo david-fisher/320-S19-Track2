@@ -79,6 +79,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
                     pp = PaymentProcessor.factory(PaymentProcessorType.STRIPE, settings.STRIPE_KEY, new_user)
 
+                    # Creates a Stripe Customer token from the given stripe card
+                    pp.setup_user(stripe_card)
 
                     charge_data = pp.charge()
 
