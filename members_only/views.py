@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from members_only.models import User, Post, Comment, Photo, ShortLink, VerificationCharge
-from members_only.serializers import UserSerializer, UserSetupSerializer, UserRegisterSerializer, PostSerializer, CommentSerializer, PhotoSerializer, ShortLinkSerializer
+from members_only.serializers import UserSerializer, UserSetupSerializer, UserRegisterSerializer, PostSerializer, CommentSerializer, PhotoSerializer, ShortLinkSerializer, UserVerificationSerializer, VerificationChargeSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 
@@ -50,6 +50,8 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             return Response({"message": "Invalid data"})
     
+
+    """ ADDED FOR TESTING PURPOSES, SHOULD BE CHECKED BY TORCH JUGGLERS """
     @action(detail=False, methods=['put'], serializer_class=UserRegisterSerializer, permission_classes=[])
     def register(self, request):
         serializer = UserRegisterSerializer(data=request.data)
@@ -92,8 +94,43 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             return Response({"message": "Invalid data"})
     
+        """ ADDED FOR TESTING PURPOSES, SHOULD BE CHECKED BY TORCH JUGGLERS """
+    @action(detail=False, methods=['put'], serializer_class=VerificationChargeSerializer, permission_classes=[])
+    def verify(self, request):
+        serializer = VerificationChargeSerializer(data=request.data)
+        if serializer.is_valid():
+            
+            """ TODO
+                Check if reset code is right.
+                Formalize reponces.
+                More detailed resposes from payment processor exceptions
+            """
+
+            
+            user = request.user
+
+            if( user.is_verified ):
+                return Response({"message": "Already Verified"})
+
+            try:
+                pp = PaymentProcessor.factory(PaymentProcessorType.STRIPE, STRIPE_KEY, user)
+
+                if(pp.verify(request.data['amount']) ):
+                    return Response({"message": "Verified"})
+                    user.save()
+                else:
+                    return Response({"message": "Incorrect amount"})
+                    user.save()
+                    
+
+            except Exception as e:
+                traceback.print_exc()
+                return Response({"message": "Failed to verify user. A server exception as occured."})
 
 
+
+        else:
+            return Response({"message": "Invalid data"})
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-timestamp')

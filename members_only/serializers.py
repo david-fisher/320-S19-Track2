@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from members_only.models import Post, Comment, User, Photo, ShortLink
+from members_only.models import Post, Comment, User, Photo, ShortLink, VerificationCharge
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,11 +13,22 @@ class UserSetupSerializer(serializers.ModelSerializer):
         model = User
         fields = ('email', 'reset_code', 'password')
 
-
 class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email', 'reset_code', 'first_name', 'last_name', 'address', 'stripe_card')
+
+class UserVerificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('verification_charge',)
+
+
+class VerificationChargeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VerificationCharge
+        fields = ('amount',)
+
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:

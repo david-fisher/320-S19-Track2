@@ -187,7 +187,7 @@ class StripeAdapter(PaymentProcessor):
             raise NoVerificationChargeError(
                 "No verification charge has been generated for the User")
 
-        if amount == self._user.verification_charge[1]:
+        if amount == self._user.verification_charge.amount:
             self._user.verified = True
             self._user.verification_charge = None
             self._user.last_verified = datetime.datetime.now()
