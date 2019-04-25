@@ -8,7 +8,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 
 from members_only.payment_processing.payment_processing import PaymentProcessor, PaymentProcessorType
-from members_only.settings import STRIPE_KEY, POINTS_PER_POST, POINTS_PER_COMMENT
+
+import members_only.settings as settings
+
 from django.utils import translation # might not need
 import traceback
 
@@ -34,6 +36,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], serializer_class=UserSetupSerializer, permission_classes=[])
     def setup(self, request):
         serializer = UserSetupSerializer(data=request.data)
+        
         if serializer.is_valid():
             if User.objects.filter(username=serializer.data['email']).exists():
                 new_user = User.objects.get(username=serializer.data['email'])
@@ -51,10 +54,13 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"message": "Invalid data"})
     
 
-    """ ADDED FOR TESTING PURPOSES, SHOULD BE CHECKED BY TORCH JUGGLERS """
+    """ ADDED FOR TESTING PURPOSES, SHOULD BE CHECKED BY TORCH JUGGLERS 
+        Should this be moved to setup?
+    """
     @action(detail=False, methods=['put'], serializer_class=UserRegisterSerializer, permission_classes=[])
     def register(self, request):
         serializer = UserRegisterSerializer(data=request.data)
+
         if serializer.is_valid():
             
             """ TODO
@@ -68,9 +74,11 @@ class UserViewSet(viewsets.ModelViewSet):
                 new_user = User.objects.get(username=serializer.data['email'])
 
                 try:
-                    pp = PaymentProcessor.factory(PaymentProcessorType.STRIPE, STRIPE_KEY, new_user)
+                    
+                    stripe_card = serializer.data['stripe_card']
 
-                    pp.setup_user( serializer.data['stripe_card'] )
+                    pp = PaymentProcessor.factory(PaymentProcessorType.STRIPE, settings.STRIPE_KEY, new_user)
+
 
                     charge_data = pp.charge()
 
@@ -112,23 +120,20 @@ class UserViewSet(viewsets.ModelViewSet):
                 return Response({"message": "Already Verified"})
 
             try:
-                pp = PaymentProcessor.factory(PaymentProcessorType.STRIPE, STRIPE_KEY, user)
+                pp = PaymentProcessor.factory(PaymentProcessorType.STRIPE, settings.STRIPE_KEY, user)
+                
+                amount = int(request.data['amount'])
 
-                if pp.verify( int(request.data['amount']) ) :
+                if pp.verify(amount) :
                     user.save()
                     return Response({"message": "Verified"})
-
                 else:
                     user.save()
                     return Response({"message": "Incorrect amount"})
 
-                    
-
             except Exception as e:
                 traceback.print_exc()
                 return Response({"message": "Failed to verify user. A server exception as occured."})
-
-
 
         else:
             return Response({"message": "Invalid data"})
@@ -143,7 +148,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
         return_val =  super().create(request)
 
-        request.user.points_balance += POINTS_PER_POST
+        request.user.points_balance += settings.POINTS_PER_POST
 
         request.user.save()
 
@@ -160,7 +165,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     def create(self, request):
         return_val =  super().create(request)
 
-        request.user.points_balance += POINTS_PER_COMMENT
+        request.user.points_balance += settings.POINTS_PER_COMMENT
 
         request.user.save()
 
