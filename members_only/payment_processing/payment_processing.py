@@ -7,9 +7,11 @@ from functools import wraps
 
 import traceback
 
+
+MIN_CHARGE = 50
+MAX_CHARGE = 80
+
 # Enum of of implemented payment processor types which can be instantiated
-
-
 class PaymentProcessorType(Enum):
     STRIPE = 1
 
@@ -17,7 +19,7 @@ class PaymentProcessorType(Enum):
 class PaymentProcessor(ABC):
 
     @staticmethod
-    def factory(paymentProcessorType, apiKey, user):
+    def create_payment_processor(paymentProcessorType, apiKey, user):
         if(paymentProcessorType == PaymentProcessorType.STRIPE):
             return StripeAdapter(apiKey, user)
 
@@ -33,7 +35,7 @@ class PaymentProcessor(ABC):
         pass
 
     @abstractmethod
-    def charge(self):
+    def charge(self, check_reverification=False):
         pass
 
     @abstractmethod
@@ -95,6 +97,10 @@ class StripeAdapter(PaymentProcessor):
 
         return decorated
 
+    """
+        Creates a Stripe Customer token with the Stripe API and adds it to the user.
+        Additionally, sets the user as unverified, clears out any verification charges and last verified time 
+    """
     @_handleStripeError
     def setup_user(self, token):
 
@@ -115,14 +121,19 @@ class StripeAdapter(PaymentProcessor):
         self._user.is_verified = False
         self._user.verification_charge = None
         self._user.last_verified = None
+    
+    """
+        Charges a user a random amount of cents between MIN_CHARGE, MAX_CHARGE.
 
+        On a successful charge, returns a dictionary with a timestamp and amount field
+    """
     @_handleStripeError
-    def charge(self):
+    def charge(self, check_reverification=False):
         if self._user.stripe_customer == None:
             raise UserNotSetupError(
                 "The users customer object has not been setup yet")
 
-        amt = random.randint(50, 80)
+        amt = random.randint(MIN_CHARGE, MAX_CHARGE)
 
         resp = stripe.Charge.create(
             amount=amt,
@@ -131,11 +142,21 @@ class StripeAdapter(PaymentProcessor):
             description="Charge for " + self._user.first_name + " " + self._user.last_name
         )
 
-        if(self._user.last_verified is None or datetime.datetime.now() - self._user.last_verified > datetime.timedelta(days=90)):
-            self._user.verified = False
+        if check_reverification:
+            if(self._user.last_verified is None or datetime.datetime.now() - self._user.last_verified > datetime.timedelta(days=90)):
+                self._user.verified = False
 
-        return (  datetime.datetime.fromtimestamp(resp["created"]), resp["amount"])
+        charge_info = {
+            "timestamp": datetime.datetime.fromtimestamp(resp["created"]),
+            "amount": resp["amount"]
+        }
 
+        return charge_info
+
+
+    """
+        Updates a users credit card from a supplied Stripe Token
+    """
     @_handleStripeError
     def update_payment_method(self, token):
         if self._user.stripe_customer == None or self._user.stripe_customer == "":
@@ -149,7 +170,15 @@ class StripeAdapter(PaymentProcessor):
 
         return True
 
-    """ NOT UPDATED """
+    """
+        Retrieves a random charge from the user from that past maxDaysOld days.
+
+        Returns a charge dictionary with a timestamp and amount field
+
+        Note: it does not set the verification_charge to the user at the moment. 
+
+        This is not necessarily needed in the project unless we want to implement continuous re verification
+    """
     @_handleStripeError
     def generate_verification_charge(self, maxDaysOld):
         if self._user.stripe_customer == None or self._user.stripe_customer == "":
@@ -180,18 +209,25 @@ class StripeAdapter(PaymentProcessor):
 
         random.shuffle(validCharges)
 
-        self._user.verification_charge = (
-            validCharges[0]["created"], validCharges[0]["amount"])
+        resp = validCharges[0]
 
-        return self._user.verification_charge
+        charge_info = {
+            "timestamp": datetime.datetime.fromtimestamp(resp["created"]),
+            "amount": resp["amount"]
+        }
 
+        # TODO: set the verifcation_charge to the user account
+
+        return charge_info
+
+
+    """
+        Verifies that the supplied amount matches the verification charge
+    """
     def verify(self, amount):
         if self._user.verification_charge == None:
             raise NoVerificationChargeError(
                 "No verification charge has been generated for the User")
-
-        print(amount)
-        print(self._user.verification_charge.amount)
 
         if amount == self._user.verification_charge.amount:
             self._user.is_verified = True

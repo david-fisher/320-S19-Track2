@@ -13,27 +13,27 @@ class PaymentProcessingUnitTest(unittest.TestCase):
 
         self.TestUser = User("Test", "User", None)
 
-        pp = PaymentProcessor.factory(
+        pp = PaymentProcessor.create_payment_processor(
             PaymentProcessorType.STRIPE, self.APIKey, self.TestUser)
 
         pp.setup_user("tok_visa")
 
     def test_factory_returns_correct_adaptor(self):
-        pp = PaymentProcessor.factory(
+        pp = PaymentProcessor.create_payment_processor(
             PaymentProcessorType.STRIPE, self.APIKey, None)
 
         self.assertIsInstance(pp, StripeAdapter)
 
     def test_factory_returns_incorrect_adaptor_error(self):
         with self.assertRaises(PP.PaymentAdaptorError):
-            PaymentProcessor.factory(-1, self.APIKey, None)
+            PaymentProcessor.create_payment_processor(-1, self.APIKey, None)
 
     def test_setupUser_returns_valid_token(self):
 
         try:
             user = User("FirstName", "LastName", None)
 
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 user
@@ -50,7 +50,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         with self.assertRaises(PP.InvalidRequestError):
             user = User("FirstName", "LastName", None)
 
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 user
@@ -63,7 +63,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         with self.assertRaises(PP.CardDeclinedError):
             user = User("FirstName", "LastName", None)
 
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 user
@@ -76,7 +76,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         with self.assertRaises(PP.UserAlreadySetupError):
             user = User("FirstName", "LastName", "cus_token")
 
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 user
@@ -86,7 +86,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
 
     def test_charge_succeeds(self):
         try:
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 self.TestUser
@@ -103,7 +103,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         with self.assertRaises(PP.CardDeclinedError):
             user = User("Decline", "Charge", None)
 
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 user
@@ -117,7 +117,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         with self.assertRaises(PP.UserNotSetupError):
             user = User("Decline", "Charge", None)
 
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 user
@@ -132,7 +132,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         user.is_verified = True
         user.last_verified = dt.datetime.now() - dt.timedelta(days=91)
 
-        pp = PaymentProcessor.factory(
+        pp = PaymentProcessor.create_payment_processor(
             PaymentProcessorType.STRIPE,
             self.APIKey,
             user
@@ -150,7 +150,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         user.is_verified = True
         user.last_verified = dt.datetime.now() - dt.timedelta(days=20)
 
-        pp = PaymentProcessor.factory(
+        pp = PaymentProcessor.create_payment_processor(
             PaymentProcessorType.STRIPE,
             self.APIKey,
             user
@@ -167,7 +167,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         try:
             user = User("Decline", "Charge", None)
 
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 self.TestUser
@@ -184,7 +184,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
 
     def test_update_payment_method_declined(self):
         with self.assertRaises(PP.CardDeclinedError):
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 self.TestUser
@@ -195,7 +195,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
     def test_update_payment_method_invalid_token(self):
         with self.assertRaises(PP.InvalidRequestError):
 
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 self.TestUser
@@ -207,7 +207,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         with self.assertRaises(PP.UserNotSetupError):
             user = User("Decline", "Card", None)
 
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 user
@@ -218,7 +218,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
     def test_generate_verification_charge_success(self):
 
         try:
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 self.TestUser
@@ -239,7 +239,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         with self.assertRaises(PP.NoVerificationChargeError):
             user = User("No", "Charge", None)
 
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 user
@@ -251,7 +251,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
 
     def test_generate_verification_negative_max_days_old(self):
         with self.assertRaises(PP.NoVerificationChargeError):
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 self.TestUser
@@ -264,7 +264,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         with self.assertRaises(PP.UserNotSetupError):
             user = User("No", "Charge", None)
 
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 user
@@ -277,7 +277,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         self.TestUser.is_verified = False
         self.TestUser.last_verified = dt.datetime.now() - dt.timedelta(days=120)
 
-        pp = PaymentProcessor.factory(
+        pp = PaymentProcessor.create_payment_processor(
             PaymentProcessorType.STRIPE,
             self.APIKey,
             self.TestUser
@@ -300,7 +300,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
 
         last_verified_copy = self.TestUser.last_verified
 
-        pp = PaymentProcessor.factory(
+        pp = PaymentProcessor.create_payment_processor(
             PaymentProcessorType.STRIPE,
             self.APIKey,
             self.TestUser
@@ -322,7 +322,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         with self.assertRaises(PP.NoVerificationChargeError):
             user = User("No", "Verif", None)
 
-            pp = PaymentProcessor.factory(
+            pp = PaymentProcessor.create_payment_processor(
                 PaymentProcessorType.STRIPE,
                 self.APIKey,
                 user

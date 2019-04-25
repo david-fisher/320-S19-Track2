@@ -7,11 +7,11 @@ from members_only.serializers import UserSerializer, UserSetupSerializer, UserRe
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 
-from members_only.payment_processing.payment_processing import PaymentProcessor, PaymentProcessorType
+from members_only.payment_processing.payment_processing import PaymentProcessor, PaymentProcessorType, APIConnectionError, InvalidAPIKeyError, InvalidRequestError, CardDeclinedError, PaymentAdaptorError, UserNotSetupError, UserAlreadySetupError, NoVerificationChargeError
 
 import members_only.settings as settings
 
-from django.utils import translation # might not need
+from django.utils import translation  # might not need
 import traceback
 
 # Create your views here.
@@ -36,7 +36,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], serializer_class=UserSetupSerializer, permission_classes=[])
     def setup(self, request):
         serializer = UserSetupSerializer(data=request.data)
-        
+
         if serializer.is_valid():
             if User.objects.filter(username=serializer.data['email']).exists():
                 new_user = User.objects.get(username=serializer.data['email'])
@@ -52,7 +52,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
         else:
             return Response({"message": "Invalid data"})
-    
 
     """ ADDED FOR TESTING PURPOSES, SHOULD BE CHECKED BY TORCH JUGGLERS 
         Should this be moved to setup?
@@ -62,7 +61,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserRegisterSerializer(data=request.data)
 
         if serializer.is_valid():
-            
+
             """ TODO
                 Verify/Update/Save other fields
                 Check if reset code is right.
@@ -73,72 +72,137 @@ class UserViewSet(viewsets.ModelViewSet):
             if User.objects.filter(username=serializer.data['email']).exists():
                 new_user = User.objects.get(username=serializer.data['email'])
 
+                # TODO: This could be extracted into another function
                 try:
-                    
+
                     stripe_card = serializer.data['stripe_card']
 
-                    pp = PaymentProcessor.factory(PaymentProcessorType.STRIPE, settings.STRIPE_KEY, new_user)
+                    pp = PaymentProcessor.create_payment_processor(
+                        PaymentProcessorType.STRIPE, settings.STRIPE_KEY, new_user)
 
                     # Creates a Stripe Customer token from the given stripe card
                     pp.setup_user(stripe_card)
 
                     charge_data = pp.charge()
 
-                    new_user.verification_charge = VerificationCharge.objects.create( timestamp=charge_data[0], amount=charge_data[1])
+                    new_user.verification_charge = VerificationCharge.objects.create(
+                        timestamp=charge_data["timestamp"], amount=charge_data["amount"])
 
                     new_user.is_verified = False
 
                     new_user.save()
 
+                    # This print is for testing verifcation with out logging onto stripe interface
+                    print("Amount charged to user: ", )
+
                     return Response({
-                        "timestamp": charge_data[0],
-                        "amount": charge_data[1]
+                        "success": True,
+                        "message": "Charge successful",
+                        "timestamp": charge_data["timestamp"]
                     })
 
-                except Exception as e:
+                except CardDeclinedError:
+                    return Response(
+                        {
+                            "success": False,
+                            "message": "The credit card was declined."
+                        }
+                    )
+
+                except APIConnectionError:
                     traceback.print_exc()
-                    return Response({"message": "Failed to charge user"})
+                    return Response(
+                        {
+                            "success": False,
+                            "message": "Failed to connect to Stripe. Try again soon."
+                        }
+                    )
+
+                except (InvalidAPIKeyError, InvalidRequestError, PaymentAdaptorError, UserNotSetupError, UserAlreadySetupError):
+                    traceback.print_exc()
+                    return Response(
+                        {
+                            "success": False,
+                            "message": "The server as encountered an error."
+                        }
+                    )
 
             else:
                 return Response({"message": "User does not exist"})
 
         else:
             return Response({"message": "Invalid data"})
-    
+
     """ ADDED FOR TESTING PURPOSES, SHOULD BE CHECKED BY TORCH JUGGLERS """
     @action(detail=False, methods=['put'], serializer_class=VerificationChargeSerializer, permission_classes=[])
     def verify(self, request):
         serializer = VerificationChargeSerializer(data=request.data)
         if serializer.is_valid():
-            
+
             """ TODO
                 Formalize reponces.
                 More detailed resposes from payment processor exceptions
             """
-       
+
             user = request.user
-        
-            if user.is_verified :
-                return Response({"message": "Already Verified"})
+
+            if user.is_verified:
+                return Response(
+                    {
+                        "success": True,
+                        "message": "User already verified"
+                    }
+                )
 
             try:
-                pp = PaymentProcessor.factory(PaymentProcessorType.STRIPE, settings.STRIPE_KEY, user)
-                
+                pp = PaymentProcessor.create_payment_processor(
+                    PaymentProcessorType.STRIPE, settings.STRIPE_KEY, user)
+
                 amount = int(request.data['amount'])
 
-                if pp.verify(amount) :
-                    user.save()
-                    return Response({"message": "Verified"})
-                else:
-                    user.save()
-                    return Response({"message": "Incorrect amount"})
+                if pp.verify(amount):
 
-            except Exception as e:
+                    user.save()
+
+                    return Response(
+                        {
+                            "success": True,
+                            "message": "User is verified"
+                        }
+                    )
+
+                else:
+
+                    user.save()
+
+                    return Response(
+                        {
+                            "success": False,
+                            "message": "Incorrect amount."
+                        })
+
+            except NoVerificationChargeError:
+                return Response(
+                    {
+                        "success": False,
+                        "message": "No verification charge is on the account."
+                    })
+
+            except PaymentAdaptorError:
                 traceback.print_exc()
-                return Response({"message": "Failed to verify user. A server exception as occured."})
+                return Response(
+                    {
+                        "success": False,
+                        "message": "The server has encountered an exception."
+                    })
 
         else:
-            return Response({"message": "Invalid data"})
+            return Response(
+                {
+                    "success": False,
+                    "message": "Invalid data"
+                })
+
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-timestamp')
@@ -148,14 +212,13 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
 
-        return_val =  super().create(request)
+        return_val = super().create(request)
 
         request.user.points_balance += settings.POINTS_PER_POST
 
         request.user.save()
 
         return return_val
-        
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -165,13 +228,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
     def create(self, request):
-        return_val =  super().create(request)
+        return_val = super().create(request)
 
         request.user.points_balance += settings.POINTS_PER_COMMENT
 
         request.user.save()
 
         return return_val
+
 
 class PhotoViewSet(viewsets.ModelViewSet):
     queryset = Photo.objects.all()
