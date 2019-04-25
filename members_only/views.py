@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from members_only.models import User, Post, Comment, Photo, ShortLink
+from members_only.models import User, Post, Comment, Photo, ShortLink, VerificationCharge
 from members_only.serializers import UserSerializer, UserSetupSerializer, UserRegisterSerializer, PostSerializer, CommentSerializer, PhotoSerializer, ShortLinkSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
@@ -71,6 +71,9 @@ class UserViewSet(viewsets.ModelViewSet):
 
                     charge_data = pp.charge()
 
+                    new_user.verification_charge = VerificationCharge.objects.create( timestamp=charge_data[0], amount=charge_data[1])
+
+                    new_user.is_verified = False
 
                     new_user.save()
 
