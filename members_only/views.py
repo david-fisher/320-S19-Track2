@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 
 from members_only.payment_processing.payment_processing import PaymentProcessor, PaymentProcessorType
-from members_only.settings import STRIPE_KEY
+from members_only.settings import STRIPE_KEY, POINTS_PER_POST, POINTS_PER_COMMENT
 from django.utils import translation # might not need
 import traceback
 
@@ -58,6 +58,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             
             """ TODO
+                Verify/Update/Save other fields
                 Check if reset code is right.
                 Formalize reponces.
                 More detailed resposes from payment processor exceptions
@@ -138,6 +139,17 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
+    def create(self, request):
+
+        return_val =  super().create(request)
+
+        request.user.points_balance += POINTS_PER_POST
+
+        request.user.save()
+
+        return return_val
+        
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('-timestamp')
@@ -145,6 +157,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
+    def create(self, request):
+        return_val =  super().create(request)
+
+        request.user.points_balance += POINTS_PER_COMMENT
+
+        request.user.save()
+
+        return return_val
 
 class PhotoViewSet(viewsets.ModelViewSet):
     queryset = Photo.objects.all()
