@@ -99,7 +99,7 @@ class StripeAdapter(PaymentProcessor):
     def setup_user(self, token):
 
         # Check if the user has a customer token
-        if self._user.stripe_customer != "":
+        if not (self._user.stripe_customer == "" or self._user.stripe_customer == None):
             raise UserAlreadySetupError(
                 "Cannot setup a user who has already been setup")
 
@@ -149,6 +149,7 @@ class StripeAdapter(PaymentProcessor):
 
         return True
 
+    """ NOT UPDATED """
     @_handleStripeError
     def generate_verification_charge(self, maxDaysOld):
         if self._user.stripe_customer == None or self._user.stripe_customer == "":
