@@ -94,33 +94,33 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             return Response({"message": "Invalid data"})
     
-        """ ADDED FOR TESTING PURPOSES, SHOULD BE CHECKED BY TORCH JUGGLERS """
+    """ ADDED FOR TESTING PURPOSES, SHOULD BE CHECKED BY TORCH JUGGLERS """
     @action(detail=False, methods=['put'], serializer_class=VerificationChargeSerializer, permission_classes=[])
     def verify(self, request):
         serializer = VerificationChargeSerializer(data=request.data)
         if serializer.is_valid():
             
             """ TODO
-                Check if reset code is right.
                 Formalize reponces.
                 More detailed resposes from payment processor exceptions
             """
-
-            
+       
             user = request.user
-
-            if( user.is_verified ):
+        
+            if user.is_verified :
                 return Response({"message": "Already Verified"})
 
             try:
                 pp = PaymentProcessor.factory(PaymentProcessorType.STRIPE, STRIPE_KEY, user)
 
-                if(pp.verify(request.data['amount']) ):
+                if pp.verify( int(request.data['amount']) ) :
+                    user.save()
                     return Response({"message": "Verified"})
-                    user.save()
+
                 else:
-                    return Response({"message": "Incorrect amount"})
                     user.save()
+                    return Response({"message": "Incorrect amount"})
+
                     
 
             except Exception as e:

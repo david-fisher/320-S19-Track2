@@ -112,7 +112,9 @@ class StripeAdapter(PaymentProcessor):
         # Get customer token from responce
         self._user.stripe_customer = responce.id
 
-        # TODO: Save user to DB
+        self._user.is_verified = False
+        self._user.verification_charge = None
+        self._user.last_verified = None
 
     @_handleStripeError
     def charge(self):
@@ -187,8 +189,11 @@ class StripeAdapter(PaymentProcessor):
             raise NoVerificationChargeError(
                 "No verification charge has been generated for the User")
 
+        print(amount)
+        print(self._user.verification_charge.amount)
+
         if amount == self._user.verification_charge.amount:
-            self._user.verified = True
+            self._user.is_verified = True
             self._user.verification_charge = None
             self._user.last_verified = datetime.datetime.now()
             return True
