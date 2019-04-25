@@ -10,7 +10,7 @@ class TestEditComment(unittest.TestCase):
         # assuming this is a void
         CommentEdit.edit_comment(id,edit)
         modified = get_comment(id)
-        self.assertEqual(modified,original,'Comment was Changed')
+        self.assertNotEqual(modified,original,'Comment was Changed')
 
     def test_calls(self, id, edit):
         # setter for comment
@@ -18,9 +18,10 @@ class TestEditComment(unittest.TestCase):
         # getter to test
         self.assertEqual(get_comment(id),edit,'Getters/Setters Work')
 
-    def cmp_edit(id):
-        get_comment(id)
-        get_edited_comment(id)
+    def cmp_edit(self, id):
+        DBAdapter.get_comment(id)
+        DBAdapter.get_edited_comment(id)
+        self.assertNotEqual(get_comment,get_edited_comment,'Compare edited comment with original')
 
 # dummy functions
 def get_comment(x):
