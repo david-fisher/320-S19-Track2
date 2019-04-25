@@ -14,6 +14,11 @@ class UserSetupSerializer(serializers.ModelSerializer):
         fields = ('email', 'reset_code', 'password')
 
 
+class UserRegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('email', 'reset_code', 'first_name', 'last_name', 'address', 'stripe_card')
+
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post

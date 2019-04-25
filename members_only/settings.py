@@ -22,6 +22,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "CHANGE_ME!!!! (P.S. the SECRET_KEY environment variable will be used, if set, instead)."
 
+# SECURITY WARNING: this key should normaly be kept private and not published to Github.
+#   this test private key will be deactivated after the project is complete
+STRIPE_KEY = "sk_test_olr9DVGJZ9ckaU3y2dkqtDja"
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

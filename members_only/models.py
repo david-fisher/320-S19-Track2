@@ -6,7 +6,6 @@ from django.contrib.auth.models import AbstractUser
 from PIL import Image
 from PIL import ImageFilter
 
-
 class Photo(models.Model):
     file = models.FileField(upload_to='uploads/%Y/%m/%d/')
 
@@ -23,6 +22,8 @@ class User(AbstractUser):
     address = models.TextField(default="")
     points_balance = models.IntegerField(default=0)
     stripe_card = models.CharField(max_length=100, default="")
+    stripe_customer = models.CharField(max_length=100, default="")
+    last_verified = models.DateTimeField(default=None, null=True)
     reset_code = models.CharField(max_length=10, default="")
 
 
