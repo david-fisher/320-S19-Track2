@@ -1,6 +1,6 @@
 import unittest
 import stripe
-from pp_tests_user import User
+from pp_tests_user import User, VerificationCharge
 from payment_processing import PaymentProcessor, PaymentProcessorType, StripeAdapter
 import payment_processing as PP
 import datetime as dt
@@ -147,9 +147,6 @@ class PaymentProcessingUnitTest(unittest.TestCase):
     def test_charge_user_does_not_need_verification(self):
         user = User("NotNeed", "Verification", None)
 
-        user.is_verified = True
-        user.last_verified = dt.datetime.now() - dt.timedelta(days=20)
-
         pp = PaymentProcessor.create_payment_processor(
             PaymentProcessorType.STRIPE,
             self.APIKey,
@@ -157,6 +154,10 @@ class PaymentProcessingUnitTest(unittest.TestCase):
         )
 
         pp.setup_user("tok_visa")
+
+        user.is_verified = True
+        user.last_verified = dt.datetime.now() - dt.timedelta(days=20)
+
 
         pp.charge()
 
@@ -228,8 +229,7 @@ class PaymentProcessingUnitTest(unittest.TestCase):
 
             verif = pp.generate_verification_charge(10)
 
-            self.assertGreater(verif[0], 0)
-            self.assertGreater(verif[1], 0)
+            self.assertGreater(verif["amount"], 0)
 
         except Exception:
             self.assertTrue(False)
@@ -287,7 +287,9 @@ class PaymentProcessingUnitTest(unittest.TestCase):
 
         charge = pp.generate_verification_charge(10)
 
-        self.assertTrue(pp.verify(charge[1]))
+        self.TestUser.verification_charge = VerificationCharge( charge["timestamp"], charge["amount"])
+
+        self.assertTrue(pp.verify(charge["amount"]))
         self.assertTrue(self.TestUser.is_verified)
         self.assertTrue(self.TestUser.verification_charge is None)
         self.assertLess(dt.datetime.now() - self.TestUser.last_verified,
@@ -310,7 +312,9 @@ class PaymentProcessingUnitTest(unittest.TestCase):
 
         pp.charge()
 
-        pp.generate_verification_charge(10)
+        charge = pp.generate_verification_charge(10)
+
+        self.TestUser.verification_charge = VerificationCharge( charge["timestamp"], charge["amount"] - 1)
 
         self.assertFalse(pp.verify(-1))
         self.assertFalse(self.TestUser.is_verified)

@@ -144,7 +144,7 @@ class StripeAdapter(PaymentProcessor):
 
         if check_reverification:
             if(self._user.last_verified is None or datetime.datetime.now() - self._user.last_verified > datetime.timedelta(days=90)):
-                self._user.verified = False
+                self._user.is_verified = False
 
         charge_info = {
             "timestamp": datetime.datetime.fromtimestamp(resp["created"]),
