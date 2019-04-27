@@ -2,7 +2,13 @@ from PIL import Image
 
 
 class SponsoredImageInsertion:
+    filter_name = "Sponsored Items"
 
+    @staticmethod
+    def filter(img, sponsored_item):
+        pass
+
+    @staticmethod
     def insert(img, sponsored_item):
         # create a copy of the original image
         img_copy = img.copy()
@@ -31,6 +37,7 @@ class SponsoredImageInsertion:
         # return the image with the sponsored content inserted
         return img_copy
 
+    @staticmethod
     def insert_png(img, sponsored_item):
         # create a copy of the original image
         img_copy = img.copy()

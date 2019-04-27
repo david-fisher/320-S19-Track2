@@ -31,7 +31,6 @@ class Grayscale:
 
     # Class attributes
     filter_name = "Grayscale"
-    filter_preview_url = ""
 
     # Filter method
     @staticmethod
@@ -58,7 +57,6 @@ class Negative:
 
     # Class' attributes
     filter_name = "Negative"
-    filter_preview_url = ""
 
     # Filter method
     @staticmethod
@@ -84,7 +82,6 @@ class Sepia:
 
     # Class' attributes
     filter_name = "Sepia"
-    filter_preview_url = ""
 
     # Filter method
     @staticmethod
@@ -118,7 +115,6 @@ class Flip:
 
     # Class' attributes
     filter_name = "Flip"
-    filter_preview_url = ""
 
     # Filter method
     @staticmethod
@@ -143,7 +139,6 @@ class Mirror:
 
     # Class' attributes
     filter_name = "Mirror"
-    filter_preview_url = ""
 
     # Filter method
     @staticmethod
