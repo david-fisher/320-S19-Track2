@@ -24,6 +24,18 @@ class App extends Component {
                 logged_in: false,
             }
         } else {
+            fetch('/api/user/current_user/', {
+                headers: new Headers({'Authorization': 'Token ' + token}),
+            })
+            .then(response => {
+                if (response.status !== 200) {
+                    return this.setState({placeholder: "Something went wrong"});
+                }
+
+                return response.json();
+            })
+            .then(data => this.setState({user_id: data.id}));
+
             this.state = {
                 token: token,
                 logged_in: true,
@@ -60,11 +72,15 @@ class App extends Component {
                                    }/>
                             <Route exact path="/feed"
                                    render={
-                                       (props) => <Feed {...props} token={this.state.token}/>
+                                       (props) => <Feed {...props} userID={this.state.user_id} token={this.state.token}/>
                                    }/>
                             <Route exact path="/user/logout"
                                    render={
                                        (props) => <Logout {...props} updateToken={this.updateToken.bind(this)}/>
+                                   }/>
+                            <Route exact path="/user/login"
+                                   render={
+                                       (props) => <Login {...props} updateToken={this.updateToken.bind(this)}/>
                                    }/>
                         </div>
                     </div>

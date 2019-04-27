@@ -33,7 +33,7 @@ class Invite extends Component {
           }
         });
 
-        xhr.open("POST", "http://127.0.0.1:8000/api/user/");
+        xhr.open("POST", "/api/user/");
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader("cache-control", "no-cache");
         xhr.setRequestHeader("Authorization", "Token " + this.props.token);
