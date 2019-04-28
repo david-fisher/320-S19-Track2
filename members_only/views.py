@@ -48,6 +48,12 @@ class UserViewSet(viewsets.ModelViewSet):
                 new_user.first_name = serializer.data['first_name']
                 new_user.last_name = serializer.data['last_name']
                 new_user.address = serializer.data['address']
+                
+                paymentResponse = setupPayments(new_user, serializer)
+
+                # If payment has failed, don't save the new user, return error message
+                if paymentResponse['success'] is False:
+                    return paymentResponse
 
                 new_user.set_password(serializer.data['password'])
                 new_user.save()
@@ -70,11 +76,12 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
+
     def create(self, request):
 
         return_val = super().create(request)
 
-        request.user.points_balance += settings.POINTS_PER_POST
+        request.user.points += settings.POINTS_PER_POST
 
         request.user.save()
 
@@ -90,7 +97,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     def create(self, request):
         return_val = super().create(request)
 
-        request.user.points_balance += settings.POINTS_PER_COMMENT
+        request.user.points += settings.POINTS_PER_COMMENT
 
         request.user.save()
 
@@ -109,3 +116,63 @@ class ShortLinkViewSet(viewsets.ModelViewSet):
     serializer_class = ShortLinkSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
+
+
+def setupPayments(new_user, serializer):
+    # TODO: This could be extracted into another function
+    try:
+
+        stripe_card = serializer.data['stripe_card']
+
+        pp = PaymentProcessor.create_payment_processor(
+            PaymentProcessorType.STRIPE, settings.STRIPE_KEY, new_user)
+
+        # Creates a Stripe Customer token from the given stripe card
+        pp.setup_user(stripe_card)
+
+        charge_data = pp.charge()
+
+        new_user.verification_charge = VerificationCharge.objects.create(
+            timestamp=charge_data["timestamp"], amount=charge_data["amount"])
+
+        new_user.is_verified = False
+
+        new_user.save()
+
+        # This print is for testing verification without logging onto stripe interface
+        print("Amount charged to user: ", charge_data["amount"])
+
+        return Response({
+                        "success": True,
+                        "message": "Charge successful",
+                        "timestamp": charge_data["timestamp"]
+                        })
+
+    except CardDeclinedError:
+        return Response(
+            {
+                "success": False,
+                "message": "The credit card was declined."
+            }
+        )
+
+    except APIConnectionError:
+        traceback.print_exc()
+        return Response(
+            {
+                "success": False,
+                "message": "Failed to connect to Stripe. Try again soon."
+            }
+        )
+
+    except (InvalidAPIKeyError, InvalidRequestError, PaymentAdaptorError, UserNotSetupError, UserAlreadySetupError):
+        traceback.print_exc()
+        return Response(
+            {
+                "success": False,
+                "message": "The server as encountered an error."
+            }
+        )
+
+    else:
+        return Response({"message": "User does not exist"})

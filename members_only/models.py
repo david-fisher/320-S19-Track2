@@ -3,6 +3,15 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+# Added by Model 2
+class VerificationCharge(models.Model):
+    """
+    Stores the time and amount of a charge for a User to verify
+    """
+    timestamp = models.DateTimeField(default=None, null=True)
+    amount = models.IntegerField(default=0)
+
+
 class User(AbstractUser):
     """
     Defines the attributes of a User.
@@ -20,6 +29,13 @@ class User(AbstractUser):
     address = models.TextField(default="")
     blocked_members = models.ManyToManyField("self", blank=True, )
     reset_code = models.CharField(max_length=10, default="")
+
+    # Added by Model 2 
+    stripe_card = models.CharField(max_length=50)
+    stripe_customer = models.CharField(max_length=50)
+    verification_charge = models.ForeignKey(VerificationCharge, on_delete=models.CASCADE, default=None, null=True)
+    last_verified = models.DateTimeField(default=None, null=True) # Date of last verification (If repeated verification is wanted)
+
 
 class Post(models.Model):
     """
