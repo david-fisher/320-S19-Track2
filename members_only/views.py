@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view
-from members_only.models import User, Post, Comment, Image, ShortLink
+from members_only.models import User, Post, Comment, Image, ShortLink, VerificationCharge
 from members_only.serializers import UserSerializer, UserSetupSerializer, PostSerializer, CommentSerializer, ImageSerializer, ShortLinkSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
@@ -52,13 +52,14 @@ class UserViewSet(viewsets.ModelViewSet):
                 paymentResponse = setupPayments(new_user, serializer)
 
                 # If payment has failed, don't save the new user, return error message
-                if paymentResponse['success'] is False:
+                if paymentResponse.data['success'] is False:
+                    print( paymentResponse.data['message'] )
                     return paymentResponse
 
                 new_user.set_password(serializer.data['password'])
                 new_user.save()
 
-                Response({"message": "User registered successfully"})
+                return Response({"message": "User registered successfully"})
             else:
                 return Response({"message": "User does not exist"})
 
@@ -136,8 +137,6 @@ def setupPayments(new_user, serializer):
             timestamp=charge_data["timestamp"], amount=charge_data["amount"])
 
         new_user.is_verified = False
-
-        new_user.save()
 
         # This print is for testing verification without logging onto stripe interface
         print("Amount charged to user: ", charge_data["amount"])
