@@ -15,7 +15,7 @@ def create_user_profile(sender, instance, created, **kwargs):
             
             You've been invited to MembersOnly. 
             
-            Follow this link to finish setup at https://members-only.com/user/setup and use {} as your access code. 
+            Follow this link to finish setup at https://members-only-torch-jugglers.herokuapp.com/ and use {} as your access code. 
             
             Thanks, Staff""".format(reset_code),
             "admin@membersonly.com",
