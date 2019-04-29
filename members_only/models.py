@@ -1,7 +1,13 @@
 from __future__ import unicode_literals
 
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+
+from django.db import models
+
+
+class Photo(models.Model):
+    file = models.FileField(upload_to='uploads/%Y/%m/%d/')
+
 
 class User(AbstractUser):
     """
@@ -55,6 +61,7 @@ class CreditCard(models.Model):
 class ShortLink(models.Model):
     originalURL = models.URLField()
     short_token = models.CharField(max_length=10)
+
 
 class Image(models.Model):
     user                = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
