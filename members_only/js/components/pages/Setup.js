@@ -191,7 +191,7 @@ class Setup extends Component {
             </div>
 
             <StripeCheckout
-              stripeKey="pk_test_OzmEbenGWueVpVlAQ54kHyGj00CekUS2fy"
+              stripeKey="pk_test_K6KdPJVX535SygtsR9joQpuQ"
               token={this.onToken}
             />
 
