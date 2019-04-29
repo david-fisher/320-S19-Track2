@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import StripeCheckout from 'react-stripe-checkout';
 import Notification from "../Notification";
 import { Route, Redirect} from 'react-router'
 
@@ -12,7 +13,7 @@ class Setup extends Component {
             notificationType: "success",
             setupComplete: false
         };
-
+        this.onToken = (token, addresses) => this.token = token
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -49,13 +50,24 @@ class Setup extends Component {
             return;
         }
 
+        if (this.token == null) {
+            this.setState({
+                notificationText: "Payment Incomplete.",
+                notificationType: "danger"
+            });
+
+            event.preventDefault();
+            return;
+        }
+        console.log(this.token)
         let data = JSON.stringify({
             "first_name": this.first_name.value,
             "last_name": this.last_name.value,
             "email": this.email.value,
             "password": this.password.value,
             "address": this.address.value,
-            "reset_code": this.access_code.value
+            "reset_code": this.access_code.value,
+            "token": this.token
         });
 
         let xhr = new XMLHttpRequest();
@@ -147,6 +159,11 @@ class Setup extends Component {
                             </p>
                         </div>
 
+                        <StripeCheckout
+                            stripeKey="pk_test_OzmEbenGWueVpVlAQ54kHyGj00CekUS2fy"
+                            token={this.onToken}
+                        />
+            
                         <div className="field">
                             <p className="control">
                                 <input type="submit" value="Finish Setup" className="button is-success"/>
