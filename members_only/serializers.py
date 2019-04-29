@@ -13,11 +13,16 @@ class UserSetupSerializer(serializers.ModelSerializer):
         model = User
         fields = ('email', 'reset_code', 'password', 'first_name', 'last_name', 'address', 'stripe_card')
 
+class UserRegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('email', 'reset_code', 'first_name', 'last_name', 'address', 'stripe_card')
+
 
 class VerificationChargeSerializer(serializers.ModelSerializer):
     class Meta:
         model = VerificationCharge
-        fields = ('amount',) # With out the extra comma this will cause errors
+        fields = ('amount',)
 
 
 class PostSerializer(serializers.ModelSerializer):
