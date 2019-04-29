@@ -19,7 +19,7 @@ router = routers.DefaultRouter()
 router.register(r'user', members_only.views.UserViewSet)
 router.register(r'post', members_only.views.PostViewSet)
 router.register(r'comment', members_only.views.CommentViewSet)
-router.register(r'photo', members_only.views.PhotoViewSet)
+router.register(r'photo', members_only.views.ImageViewSet)
 router.register(r'short-link', members_only.views.ShortLinkViewSet)
 
 urlpatterns = [
