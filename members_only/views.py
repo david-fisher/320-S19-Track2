@@ -56,11 +56,17 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(request.user, context={'request': request})
         return Response(serializer.data)
 
+
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.order_by('-date_created')
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
+
+    @action(detail=False, methods=['get'], serializer_class=PostSerializer, permission_classes=[])
+    def get_post(self, request):
+        serializer = PostSerializer(request.data)
+        return Response(serializer.data)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -69,6 +75,11 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
+    @action(detail=False, methods=['get'], serializer_class=CommentSerializer, permission_classes=[])
+    def get_post(self, request):
+        serializer = CommentSerializer(request.data)
+        return Response(serializer.data)
+
 
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
@@ -76,9 +87,19 @@ class ImageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
+    @action(detail=False, methods=['get'], serializer_class=ImageSerializer, permission_classes=[])
+    def get_post(self, request):
+        serializer = ImageSerializer(request.data)
+        return Response(serializer.data)
+
 
 class ShortLinkViewSet(viewsets.ModelViewSet):
     queryset = ShortLink.objects.all()
     serializer_class = ShortLinkSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
+
+    @action(detail=False, methods=['get'], serializer_class=ShortLinkSerializer, permission_classes=[])
+    def get_url(self, request):
+        serializer = ShortLinkSerializer(request.data)
+        return Response(serializer.data)
