@@ -59,7 +59,7 @@ class Setup extends Component {
             event.preventDefault();
             return;
         }
-        console.log(this.token)
+
         let data = JSON.stringify({
             "first_name": this.first_name.value,
             "last_name": this.last_name.value,
