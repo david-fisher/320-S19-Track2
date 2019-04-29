@@ -66,7 +66,6 @@ class Setup extends Component {
       password: this.password.value,
       address: this.address.value,
       reset_code: this.access_code.value,
-      token: this.token
     });
 
     let xhr = new XMLHttpRequest();
