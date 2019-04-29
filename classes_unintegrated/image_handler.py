@@ -36,7 +36,7 @@ class ImageFilterHandler:
                 name = re.sub('([a-z])([A-Z])', '\g<1> \g<2>', f)
             # Try pulling the args format from the filter class
             try:
-                args = getattr(filters, f).filer_args
+                args = getattr(filters, f).filter_args
             except AttributeError:
                 args = {}
 
