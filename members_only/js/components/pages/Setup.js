@@ -164,7 +164,7 @@ class Setup extends Component {
                             token={this.onToken}
                         />
             
-                        <div className="field">
+                <div className="field" style={{'margin-top': '20px'}}>
                             <p className="control">
                                 <input type="submit" value="Finish Setup" className="button is-success"/>
                             </p>
