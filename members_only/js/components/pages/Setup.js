@@ -66,6 +66,7 @@ class Setup extends Component {
       password: this.password.value,
       address: this.address.value,
       reset_code: this.access_code.value,
+      stripe_card: this.token.id.value // Changed to just send the id, it's the only information the backend is setup to handle at the moment
     });
 
     let xhr = new XMLHttpRequest();
