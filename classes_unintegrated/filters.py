@@ -187,19 +187,23 @@ class SponsoredImageInsertion:
 
     filter_name = 'Sponsored Items'
     filter_args = {
-        'Item': {
+        'item': {
+            'name': 'Item',
             'type': 'option',
             'choices': sponsored_item_choices
         }
     }
 
     @staticmethod
-    def filter(img, sponsored_item):
+    def filter(img, item='default'):
+        if item == 'default' or item not in sponsored_items:
+            item = sponsored_items[0]
+
         # create a copy of the original image
         img_copy = img.copy()
 
         # retrieve the proper sponsored item insert
-        insert = Image.open(sponsored_item_path + sponsored_item)
+        insert = Image.open(sponsored_item_path + item)
 
         # retrieve the width and height of the image for the scale
         width, height = insert.size

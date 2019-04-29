@@ -25,6 +25,27 @@ class ImageFilterHandler:
         return json.loads(s)
 
     @staticmethod
+    # Format should look like:
+    # {
+    #     'FilterOne': {
+    #         'name': 'One',
+    #         'args': {}
+    #     },
+    #     'FilterTwo': {
+    #         'name': 'Two',
+    #         'args': {
+    #             'arg1': {
+    #                 'name': 'Argument 1'
+    #                 'type': 'option',
+    #                 'choices': {
+    #                     'choice1': {
+    #                         'name': 'Choice 1'
+    #                     }
+    #                 }
+    #             }
+    #         }
+    #     }
+    # }
     def get_filters():  # todo: each filters arguments should also be included
         # todo: probably want the filter classes to provide their argument formats in their attributes
         # Currently only returns a list of filter names
