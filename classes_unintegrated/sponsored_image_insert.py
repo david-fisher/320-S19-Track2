@@ -1,10 +1,32 @@
 from PIL import Image
+from os import listdir
+from os.path import isfile, join
+import re
 
 sponsored_item_path = 'sponsored_items/'
+items_dir_path = 'sponsored_items'
+
+# retrieves sponsored_items files names from sponsored_items directory
+sponsored_items = [f for f in listdir(items_dir_path) if isfile(join(items_dir_path, f))]
+
+
+def item_info(i):
+    name = re.sub('(\.[a-z]*)', '', i).title()
+    return {'name': name}
+
+
+sponsored_item_choices = dict((item, item_info(item)) for item in sponsored_items)
+
 
 class SponsoredImageInsertion:
 
-    filter_name = "Sponsored Items"
+    filter_name = 'Sponsored Items'
+    filter_args = {
+        'Item': {
+            'type': 'option',
+            'choices': sponsored_item_choices
+        }
+    }
 
     @staticmethod
     def filter(img, sponsored_item):
