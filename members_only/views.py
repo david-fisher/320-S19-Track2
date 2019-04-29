@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view
 from members_only.models import User, Post, Comment, Image, ShortLink, VerificationCharge
-from members_only.serializers import UserSerializer, UserSetupSerializer, PostSerializer, CommentSerializer, ImageSerializer, ShortLinkSerializer
+from members_only.serializers import UserSerializer, UserSetupSerializer, PostSerializer, CommentSerializer, ImageSerializer, ShortLinkSerializer, VerificationChargeSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 
@@ -53,7 +53,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
                 # If payment has failed, don't save the new user, return error message
                 if paymentResponse.data['success'] is False:
-                    print( paymentResponse.data['message'] )
                     return paymentResponse
 
                 new_user.set_password(serializer.data['password'])
@@ -65,6 +64,42 @@ class UserViewSet(viewsets.ModelViewSet):
 
         else:
             return Response({"message": "Invalid data"})
+
+    """ ADDED FOR TESTING PURPOSES, SHOULD BE CHECKED BY TORCH JUGGLERS """
+    @action(detail=False, methods=['put'], serializer_class=VerificationChargeSerializer, permission_classes=[])
+    def verify(self, request):
+        serializer = VerificationChargeSerializer(data=request.data)
+        if serializer.is_valid():
+
+            """ TODO
+                Formalize reponces.
+                More detailed resposes from payment processor exceptions
+            """
+
+            user = request.user
+
+            if user.is_verified:
+                return Response(
+                    {
+                        "success": True,
+                        "message": "User already verified"
+                    }
+                )
+
+            response = verifyUser(user, serializer)
+
+            if response.data['success'] is False:
+                return response
+            else:
+                user.save()
+                return response
+
+        else:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Invalid data"
+                })
 
     @action(detail=False, methods=['get'], serializer_class=UserSerializer, permission_classes=[IsAuthenticated])
     def current_user(self, request):
@@ -80,13 +115,13 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
 
-        return_val = super().create(request)
+        response = super().create(request)
 
         request.user.points += settings.POINTS_PER_POST
 
         request.user.save()
 
-        return return_val
+        return response
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -96,13 +131,13 @@ class CommentViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
     def create(self, request):
-        return_val = super().create(request)
+        response = super().create(request)
 
         request.user.points += settings.POINTS_PER_COMMENT
 
         request.user.save()
 
-        return return_val
+        return response
 
 
 class ImageViewSet(viewsets.ModelViewSet):
@@ -120,7 +155,6 @@ class ShortLinkViewSet(viewsets.ModelViewSet):
 
 
 def setupPayments(new_user, serializer):
-    # TODO: This could be extracted into another function
     try:
 
         stripe_card = serializer.data['stripe_card']
@@ -175,3 +209,39 @@ def setupPayments(new_user, serializer):
 
     else:
         return Response({"message": "User does not exist"})
+
+def verifyUser(user, serializer):
+    try:
+        pp = PaymentProcessor.create_payment_processor(
+            PaymentProcessorType.STRIPE, settings.STRIPE_KEY, user)
+
+        amount = serializer.data['amount']
+
+        if pp.verify(amount):
+            return Response(
+                {
+                    "success": True,
+                    "message": "User is verified"
+                }
+            )
+        else:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Incorrect amount."
+                })
+
+    except NoVerificationChargeError:
+        return Response(
+            {
+                "success": False,
+                "message": "No verification charge is on the account."
+            })
+
+    except PaymentAdaptorError:
+        traceback.print_exc()
+        return Response(
+            {
+                "success": False,
+                "message": "The server has encountered an exception."
+            })
