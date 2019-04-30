@@ -43,6 +43,7 @@ class Post(models.Model):
 class Comment(models.Model):
     post            = models.ForeignKey(Post, on_delete=models.CASCADE)
     user            = models.ForeignKey(User, on_delete=models.CASCADE)
+    sponsored_items = models.ForeignKey(‘self’, on_delete=models.CASCADE,null=True)
     content         = models.TextField(max_length=1000000)
     date_created    = models.DateTimeField(auto_now_add=True, null=True)
     date_modified   = models.DateTimeField(auto_now=True, null=True)
@@ -60,14 +61,14 @@ class CreditCard(models.Model):
 
 class ShortLink(models.Model):
     originalURL = models.URLField()
-    short_token = models.CharField(max_length=10)
+    short_token = models.CharField(max_length=10,null=True)
 
 
 class Image(models.Model):
     user                = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     post                = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
     image_original      = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
-    filter_used         = models.BooleanField(default=False, null=True)
+    filters_used        = models.CharField(max_length=50,null=True)
     current_image       = models.ImageField(null=True)
     is_flagged          = models.BooleanField(default=False, null=True)
     by_admin            = models.BooleanField(default=False, null=True)
