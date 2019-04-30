@@ -10,20 +10,28 @@ class DBAdapter:
 
     @staticmethod
     def store_short_url(short_url):
-        pass
+        short = ShortLink.objects.create(short_token=short_url)
+        short.save()
 
     @staticmethod
     def store_long_url(long_url):
-        pass
+        long = ShortLink.objects.create(originalURL=long_url)
+        long.save()
 
     @staticmethod
     def check_short_url(short_url):
-        return False
+        if ShortLink.objects.filter(short_token=short_url).exists:
+            return True
+        else:
+            return False
 
     @staticmethod
     # GET request to check if long_url exists
     def check_long_url(long_url):
-        return False
+        if ShortLink.objects.filter(originalURL=long_url).exists:
+            return True
+        else:
+            return False
 
     @staticmethod
     # GET request to get long_url by short_url
