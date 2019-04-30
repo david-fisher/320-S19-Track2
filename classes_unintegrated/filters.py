@@ -101,16 +101,16 @@ class Sepia:
                 # Take the pixel at (x, y)
                 r, g, b = img.getpixel((x,y))
                 # Subtract the r g b values from 255 in order to get the inverted values
-                sepiaR = (r * 0.393 + g * 0.769 + b * 0.189)
-                sepiaG = (r * 0.349 + g * 0.686 + b * 0.168)
-                sepiaB = (r * 0.272 + g * 0.534 + b * 0.131)
-                if sepiaR > 255:
-                    sepiaR = 255
-                if sepiaG > 255:
-                    sepiaG = 255
-                if sepiaB > 255:
-                    sepiaB = 255
-                img_copy.putpixel((x,y), (int(sepiaR), int(sepiaG), int(sepiaB)))
+                sepia_r = (r * 0.393 + g * 0.769 + b * 0.189)
+                sepia_g = (r * 0.349 + g * 0.686 + b * 0.168)
+                sepia_b = (r * 0.272 + g * 0.534 + b * 0.131)
+                if sepia_r > 255:
+                    sepia_r = 255
+                if sepia_g > 255:
+                    sepia_g = 255
+                if sepia_b > 255:
+                    sepia_b = 255
+                img_copy.putpixel((x,y), (int(sepia_r), int(sepia_g), int(sepia_b)))
 
         return img_copy
 
@@ -225,23 +225,6 @@ class SponsoredImageInsertion:
 
         # return the image with the sponsored content inserted
         return img_copy
-
-
-# def scale(width, height, factor):
-#     scaled_height = round(height * factor)
-#     scaled_width = round(width * factor)
-#     return scaled_width, scaled_height
-
-
-# class Blur:
-#
-#     def filter(image):
-#         img_copy = img.copy()
-#         width, height = img.size
-#         clear_radius = width / 4
-#         img_copy = img_copy.filter(ImageFilter.BLUR)
-#         return img_copy
-#
 
 
 if __name__ == '__main__':
