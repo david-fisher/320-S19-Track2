@@ -1,13 +1,26 @@
 import React, {Component} from 'react';
 import { Route, Redirect} from 'react-router'
 import Cookies from 'universal-cookie';
+import Notification from "../Notification";
 
 class Login extends Component {
     constructor(props) {
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.state = {
-            logged_in: false
+
+        const cookies = new Cookies();
+        let token = cookies.get('user_token');
+
+        if (token == null) {
+            this.state = {
+                logged_in: false,
+                notificationText: ''
+            }
+        } else {
+            this.state = {
+                logged_in: true,
+                notificationText: ''
+            }
         }
     }
 
@@ -24,14 +37,23 @@ class Login extends Component {
           if (event.target.readyState === 4) {
               let response_data = JSON.parse(event.target.responseText);
 
+              if (typeof response_data.token === 'undefined') {
+                  this.setState({
+                      notificationText: 'Incorrect Credentials.',
+                      notificationType: 'danger'
+                  });
+
+                  return;
+              }
+
+              console.log(response_data);
               const cookies = new Cookies();
               cookies.set('user_token', response_data.token, {path: "/"});
 
+              this.props.updateToken(response_data.token);
               this.setState({
                   logged_in: true
               })
-
-              this.props.updateToken(response_data.token);
           }
         });
 
@@ -47,13 +69,15 @@ class Login extends Component {
     render() {
         return this.state.logged_in ?
             (
-                <Redirect to="/"/>
+                <Redirect to="/feed"/>
             )
             : (
             <form onSubmit={this.handleSubmit}>
                 <div className="columns">
                     <div className="column is-offset-one-quarter is-half">
                         <h1 className="title">Login</h1>
+
+                        <Notification text={this.state.notificationText} type={this.state.notificationType} />
 
                         <div className="field">
                             <p className="control has-icons-left has-icons-right">

@@ -11,11 +11,11 @@ class DataProvider extends Component {
     state = {
         data: [],
         loaded: false,
-        placeholder: "Loading..."
+        placeholder: "Loading...",
+        time: Date.now()
     };
 
-    componentDidMount() {
-
+    loadData() {
         fetch(this.props.endpoint, {
             headers: new Headers({'Authorization': 'Token ' + this.props.token}),
         })
@@ -27,6 +27,16 @@ class DataProvider extends Component {
                 return response.json();
             })
             .then(data => this.setState({data: data, loaded: true}));
+    }
+
+    componentWillMount() {
+        this.loadData();
+    }
+
+    componentDidUpdate(prevProps) {
+      if (this.props.postNotification !== prevProps.postNotification) {
+        this.loadData();
+      }
     }
 
     render() {

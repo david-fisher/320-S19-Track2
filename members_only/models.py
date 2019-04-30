@@ -3,47 +3,72 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-
-class Photo(models.Model):
-    file = models.FileField(upload_to='uploads/%Y/%m/%d/')
-
-
 class User(AbstractUser):
     """
     Defines the attributes of a User.
     """
 
-    # ManyToManyField models an array in this case. Many users could block many Members could block the same Members.
-    # Because the ManyToManyField refers to a Member blocking Members, we use "self".
-    blocked_members = models.ManyToManyField("self", blank=True, )
-
+    first_name  = models.CharField(max_length=50,null=True)
+    last_name   = models.CharField(max_length=50,null=True)
+    invited_by   = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    visibility  = models.BooleanField(default=False, null=True)
+    points      = models.IntegerField(default=0)
+    user_type   = models.CharField(max_length=50,null=True)
+    date_create = models.DateTimeField(auto_now_add = True,null=True)
+    is_verified = models.BooleanField(default=True,null=True)
+    birthday    = models.CharField(max_length=50,null=True)
     address = models.TextField(default="")
-    points_balance = models.IntegerField(default=0)
-    stripe_card = models.CharField(max_length=100, default="")
+    blocked_members = models.ManyToManyField("self", blank=True, )
     reset_code = models.CharField(max_length=10, default="")
-
 
 class Post(models.Model):
     """
     Post inherits from a base model.
     """
 
-    # When the User owning the post is deleted (on_delete), we want to delete all posts associated with that User.
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    body = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, blank=True, null=True)
-
+    user            = models.ForeignKey(User, on_delete=models.CASCADE)
+    urls            = models.TextField(null=True)
+    date_created    = models.DateTimeField(auto_now_add=True, null=True)
+    date_modified   = models.DateTimeField(auto_now=True, null=True)
+    is_flagged      = models.BooleanField(default=False, null=True)
+    content         = models.TextField(max_length=1000000, null=True)
+    by_admin        = models.BooleanField(default=False, null=True)
 
 class Comment(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    parent_post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    body = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    post            = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user            = models.ForeignKey(User, on_delete=models.CASCADE)
+    content         = models.TextField(max_length=1000000)
+    date_created    = models.DateTimeField(auto_now_add=True, null=True)
+    date_modified   = models.DateTimeField(auto_now=True, null=True)
+    by_admin        = models.BooleanField(default=False, null=True)
 
+class CreditCard(models.Model):
+    user            = models.ForeignKey(User, on_delete=models.CASCADE)
+    card_num        = models.CharField(max_length=16, null=True)
+    cvv             = models.CharField(max_length=3, null=True)
+    holder_name     = models.CharField(max_length=50, null=True)
+    card_expiration = models.CharField(max_length=25, null=True)
+    currently_used  = models.BooleanField(default=True, null=True)
+    address         = models.CharField(max_length=50,null=True)
+    zipcode         = models.IntegerField(null=True)
 
 class ShortLink(models.Model):
     originalURL = models.URLField()
     short_token = models.CharField(max_length=10)
+
+class Image(models.Model):
+    user                = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    post                = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
+    image_original      = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    filter_used         = models.BooleanField(default=False, null=True)
+    current_image       = models.ImageField(null=True)
+    is_flagged          = models.BooleanField(default=False, null=True)
+    by_admin            = models.BooleanField(default=False, null=True)
+
+class Filter(models.Model):
+    image       = models.ForeignKey(Image, on_delete=models.CASCADE, null=True)
+    filter_name = models.CharField(max_length=16, null=True)
+
+    def data(self):
+        return self.__dict__
 
