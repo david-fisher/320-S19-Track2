@@ -1,4 +1,3 @@
-import hashlib
 import random
 
 import classes_unintegrated.adapter as db_adapter
@@ -11,21 +10,16 @@ class URLShortener:
     def long_url_exists(long_link):
         return db_adapter.check_long_url(long_link)
 
-
     # generate random ascii string
     @staticmethod
     def create_short_url():
-        m = hashlib.shake_128()
-        m.update(str(random.getrandbits(256)).encode('utf-8'))
-        short_link = m.hexdigest(4)
+        token = str(hex(random.getrandbits(32)))[2:]
 
         # check if it is within the db
-        while db_adapter.check_short_url(short_link):
-            m.update(str(random.getrandbits(256)).encode('utf-8'))
-            short_link = m.hexdigest(4)
+        while db_adapter.check_short_url(token):
+            token = str(hex(random.getrandbits(32)))[2:]
 
-        return short_link
-
+        return token
 
     # retrieve short_url
     @staticmethod

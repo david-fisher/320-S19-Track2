@@ -43,7 +43,7 @@ class Post(models.Model):
 class Comment(models.Model):
     post            = models.ForeignKey(Post, on_delete=models.CASCADE)
     user            = models.ForeignKey(User, on_delete=models.CASCADE)
-    sponsored_items = models.ForeignKey(‘self’, on_delete=models.CASCADE,null=True)
+    sponsored_items = models.ForeignKey("self", on_delete=models.CASCADE,null=True)
     content         = models.TextField(max_length=1000000)
     date_created    = models.DateTimeField(auto_now_add=True, null=True)
     date_modified   = models.DateTimeField(auto_now=True, null=True)
