@@ -3,6 +3,7 @@ from os import listdir
 from os.path import isfile, join
 import re
 import json
+from members_only.models import User, Post, Comment, CreditCard, Image, Filter
 
 import filters as filters
 
@@ -73,16 +74,16 @@ class ImageFilterHandler:
         # todo: First pass list through serializer
         return f_info_list
 
-    @staticmethod
-    def get_sponsored_items():  # todo: make private and provide as arguments for get_filters
-        # Currently only returns a list of sponsored item names
-        def item_info(i):
-            name = re.sub('(\.[a-z]*)', '', i).title()
-            return name, i
-
-        item_info_list = list(map(item_info, ImageFilterHandler.sponsored_items))
-        # todo: First pass list through serializer
-        return item_info_list
+    # @staticmethod
+    # def get_sponsored_items():  # todo: make private and provide as arguments for get_filters
+    #     # Currently only returns a list of sponsored item names
+    #     def item_info(i):
+    #         name = re.sub('(\.[a-z]*)', '', i).title()
+    #         return name, i
+    #
+    #     item_info_list = list(map(item_info, ImageFilterHandler.sponsored_items))
+    #     # todo: First pass list through serializer
+    #     return item_info_list
 
     @staticmethod
     # applies all filter: arguments pairs in filters_dic to image
@@ -126,36 +127,37 @@ class ImageFilterHandler:
         return filtered_image
 
     @staticmethod
-    def apply_filters(image, filter_ids, *args):  # todo: Should take in arguments needed to post
+    def apply_filters(image, filter_ids):  # todo: Should take in arguments needed to post
         filters_dic = filter_ids  # todo: see __apply_filters() for format
         filtered_image = ImageFilterHandler.__apply_filters(image, filters_dic)
         filters_as_str = ImageFilterHandler.__dic_to_string(filters_dic)
         # todo: Post the filtered image
+
         return filtered_image
 
     @staticmethod
     def remove_filters(image_id, bad_filters):
         # todo: to remove filters, may need a method to give frontend current applied filters
         # todo: get image's curr filters from db and parse into dict
-        curr_filters = ImageFilterHandler.__string_to_dic(image_id.filters)
+        image_obj = Image.objects.get(id=image_id)
+        curr_filters_used = image_obj.filters_used  # todo
+        curr_filters_dic = ImageFilterHandler.__string_to_dic(curr_filters_used)
+
         # only remove if there are any filters currently applied
-        if curr_filters:
-            image = image_id.image  # todo
+        if curr_filters_dic:
             unwanted_filters = bad_filters  # todo
-            filters_to_apply = [f for f in curr_filters if f not in unwanted_filters]
-            filtered_image = ImageFilterHandler.__apply_filters(image, filters_to_apply)
-            filters_as_str = ImageFilterHandler.__dic_to_string(filters_to_apply)
-            # todo: put the filtered_image to the original
-            return filtered_image
-        # if not image_id.filters:
-        #     return "No can do"
-        # else:
-        #     original = image_id.parent
-        #     applied_filters = image_id.filters
-        #     for each filter in applied_filters:
-        #         if filter != bad_filter:
-        #             original = apply_filter(original, filter)
-        #     put(original, image_id)
+            new_filters_dic = [f for f in curr_filters_dic if f not in unwanted_filters]
+
+            curr_image = image_obj.image_original.current_image  # todo Not very sure about this
+            new_image = ImageFilterHandler.__apply_filters(curr_image, new_filters_dic)
+
+            new_filters_used = ImageFilterHandler.__dic_to_string(new_filters_dic)
+
+            # update the Image with the new filtered_image and filters_Used
+            updated_image = Image(id=image_id, current_image=new_image, filters_used=new_filters_used)
+            updated_image.save()
+
+            return new_image
 
 
 if __name__ == '__main__':
