@@ -93,13 +93,18 @@ class ImageViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class ShortLinkViewSet(viewsets.ModelViewSet):
-    queryset = ShortLink.objects.all()
-    serializer_class = ShortLinkSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
+@api_view(['GET'])
+def short_link(request, pk):
 
-    @action(detail=False, methods=['get'], serializer_class=ShortLinkSerializer, permission_classes=[])
-    def get_url(self, request):
-        serializer = ShortLinkSerializer(request.data)
+    try:
+        short_link = # todo: find out a way to try and get the long url from request.data (involves parsing)
+    except ShortLink.DoesNotExist:
+        # todo create the short link from
+        pass
+
+    if request.method == 'GET':
+        serializer = ShortLinkSerializer(short_link)
         return Response(serializer.data)
+
+# I think we may not need a GET long_url,
+# since the only time it would be used is when we redirect
