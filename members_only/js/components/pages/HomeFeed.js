@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import DataProvider from "../DataProvider";
 import Table from "../Table";
 import Notification from "../Notification";
 
-class Feed extends Component {
+class HomeFeed extends Component {
     constructor(props) {
         super(props);
 
@@ -15,16 +15,31 @@ class Feed extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    state = {
+        data: {
+            "user": null,
+            "content": null,
+            "urls": null,
+            "is_flagged": false,
+            "by_admin": false
+        }
+    };
+
+    curFirstname = "";
+    curLastname = "";
+
     handleSubmit(event) {
         event.preventDefault();
 
-        let data = JSON.stringify({
+        this.state.data = JSON.stringify({
           "user": this.props.userID,
           "content": this.post.value,
           "urls": null,
           "is_flagged": false,
           "by_admin": false
         });
+        this.curFirstname = this.props.firstName;
+        this.curLastname = this.props.lastName;
 
         var xhr = new XMLHttpRequest();
         xhr.withCredentials = true;
@@ -40,13 +55,14 @@ class Feed extends Component {
             this.post.value = '';
           }
         });
+        //console.log(this.props.userID);
 
         xhr.open("POST", "/api/post/");
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader("cache-control", "no-cache");
         xhr.setRequestHeader("Authorization", "Token " + this.props.token);
 
-        xhr.send(data);
+        xhr.send(this.state.data);
 
     }
 
@@ -71,7 +87,9 @@ class Feed extends Component {
                     </div>
                 </form>
 
-                <DataProvider postNotification={this.state.notificationText} endpoint="/api/post/" token={this.props.token} render={data => <Table data={data}/>}/>
+                <DataProvider {...this.props} postNotification={this.state.notificationText} endpoint="/api/post/" callerType="HomeFeed" token={this.props.token} render={
+                    data => this.state.data
+                } />
             </div>
         );
     }
@@ -83,4 +101,4 @@ const feedHeader = {
     fontSize: '40px'
 };
 
-export default Feed;
+export default HomeFeed;
