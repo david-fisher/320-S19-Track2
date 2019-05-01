@@ -6,7 +6,6 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('members_only', '0009_user_is_verified'),
         ('members_only', '0008_auto_20190427_1846'),
     ]
 
