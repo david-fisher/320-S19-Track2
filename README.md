@@ -94,3 +94,27 @@ Frontend Local Setup
 Compiling the Frontend
 ----------------------
 In the project directory run `npm run dev`. If you're compiling for production use `npm run build`
+
+Stripe Setup
+------------
+This setup is only required if you want to connect members only to your own Stripe Account. The current private and public keys are test keys for an account created by Model 2.
+
+Security Note: The private key should normally never be posted publicly on a repo. The keys currently posted will be deactivited once the project is complete.
+
+Stripe Registration: https://dashboard.stripe.com/register
+
+1. Set the variable STRIPE_KEY in members_only/settings.py to your Stripe accounts private key
+
+2. Set the value of the stripeKey parameter of the Stripe Payment Form in members_only/js/components/Setup.js to your Stripe accounts public key
+
+Stripe Testing
+------------
+If the the public and private keys are set to test keys, Stripe has a set of credit card numbers that can be used for testing payments without using a real card.
+
+Example:
+CC Number (Visa): 4242424242424242
+CVC: any numbers
+EXP: any date that is not expired
+
+More information at https://stripe.com/docs/testing
+
