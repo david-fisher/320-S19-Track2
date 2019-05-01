@@ -53,7 +53,7 @@ class Feed extends Component {
     render() {
         return (
             <div>
-                <h1 className="title">Feed</h1>
+                <h1 className="title" style={feedHeader}>Feed</h1>
 
                 <Notification text={this.state.notificationText} type={this.state.notificationType} />
 
@@ -76,5 +76,11 @@ class Feed extends Component {
         );
     }
 }
+
+const feedHeader = {
+    marginTop: '40px',
+    fontVariant: 'small-caps',
+    fontSize: '40px'
+};
 
 export default Feed;
