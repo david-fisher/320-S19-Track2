@@ -75,7 +75,7 @@ class Login extends Component {
             <form onSubmit={this.handleSubmit}>
                 <div className="columns">
                     <div className="column is-offset-one-quarter is-half">
-                        <h1 className="title">Login</h1>
+                        <h1 className="title" style={header}>Login</h1>
 
                         <Notification text={this.state.notificationText} type={this.state.notificationType} />
 
@@ -108,5 +108,11 @@ class Login extends Component {
         );
     }
 }
+
+const header = {
+    marginTop: '40px',
+    fontVariant: 'small-caps',
+    fontSize: '40px'
+};
 
 export default Login;
