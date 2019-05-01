@@ -14,7 +14,7 @@
   "environments": {
     "test": {
       "scripts": {
-        "postinstall": "npm install --dev && npm run dev",
+        "postdeploy": "npm install --dev; npm run dev",
         "test-setup": "python manage.py collectstatic --noinput",
         "test": "python manage.py test"
       }
