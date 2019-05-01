@@ -12,13 +12,14 @@ class URLShortener:
 
     # generate random ascii string
     @staticmethod
-    def create_short_url():
+    def create_short_url(long_link):
         token = str(hex(random.getrandbits(32)))[2:]
 
         # check if it is within the db
         while db_adapter.check_short_url(token):
             token = str(hex(random.getrandbits(32)))[2:]
-
+            db_adapter.store_short_url(token)
+            db_adapter.store_long_url(long_link)
         return token
 
     # retrieve short_url
@@ -28,7 +29,7 @@ class URLShortener:
         if check:
             return db_adapter.get_short_url(long_link)
         else:
-            return URLShortener.create_short_url()
+            return URLShortener.create_short_url(long_link)
 
 
     # redirect a user clicking a long url to a shortened one
