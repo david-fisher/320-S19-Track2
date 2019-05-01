@@ -94,10 +94,10 @@ class ImageViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['GET'])
-def short_link(request, pk):
+def link_shortening(request):
 
     try:
-        short_link = # todo: find out a way to try and get the long url from request.data (involves parsing)
+        short_link = None  # todo: find out a way to try and get the long url from request.data (involves parsing)
     except ShortLink.DoesNotExist:
         # todo create the short link from
         pass
@@ -106,5 +106,37 @@ def short_link(request, pk):
         serializer = ShortLinkSerializer(short_link)
         return Response(serializer.data)
 
+
 # I think we may not need a GET long_url,
 # since the only time it would be used is when we redirect
+
+
+@api_view(['GET'])
+def image_filters(request):
+
+    if request.method == 'GET':
+        pass
+
+
+@api_view(['PUT', 'POST'])
+def apply_filters(request):
+
+    if request.method == 'PUT':
+        pass
+
+    if request.method == 'POST':
+        pass
+
+
+@api_view(['PUT'])
+def remove_filters(request):
+
+    if request.method == 'PUT':
+        pass
+
+
+@api_view(['POST'])
+def edited_comment(request):
+
+    if request.method == 'POST':
+        pass
