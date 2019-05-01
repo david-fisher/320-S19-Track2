@@ -19,7 +19,12 @@
       }
     }
   },
-  "scripts": {
-    "postdeploy": "npm install --dev; npm run dev; python manage.py migrate"
-  }
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
 }
