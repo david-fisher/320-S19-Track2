@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 import django_heroku
 
+# Global settings for members only
+POINTS_PER_POST = 10
+POINTS_PER_COMMENT = 15
+POINTS_PER_SUCCESSFUL_INVITE = 15
+POINT_COST_FOR_INVITE = 100
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,10 +27,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "CHANGE_ME!!!! (P.S. the SECRET_KEY environment variable will be used, if set, instead)."
 
+# SECURITY WARNING: this key should normaly be kept private and not published to Github.
+#   this test private key will be deactivated after the project is complete
+STRIPE_KEY = "sk_test_olr9DVGJZ9ckaU3y2dkqtDja"
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition

@@ -1,12 +1,19 @@
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import AbstractUser
-
 from django.db import models
 
 
 class Photo(models.Model):
     file = models.FileField(upload_to='uploads/%Y/%m/%d/')
+
+# Added by Model 2
+class VerificationCharge(models.Model):
+    """
+    Stores the time and amount of a charge for a User to verify
+    """
+    timestamp = models.DateTimeField(default=None, null=True)
+    amount = models.IntegerField(default=0)
 
 
 class User(AbstractUser):
@@ -26,6 +33,13 @@ class User(AbstractUser):
     address = models.TextField(default="")
     blocked_members = models.ManyToManyField("self", blank=True, )
     reset_code = models.CharField(max_length=10, default="")
+
+    # Added by Model 2 
+    stripe_card = models.CharField(max_length=50)
+    stripe_customer = models.CharField(max_length=50)
+    verification_charge = models.ForeignKey(VerificationCharge, on_delete=models.CASCADE, default=None, null=True)
+    last_verified = models.DateTimeField(default=None, null=True) # Date of last verification (If repeated verification is wanted)
+
 
 class Post(models.Model):
     """
@@ -68,7 +82,7 @@ class Image(models.Model):
     user                = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     post                = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
     image_original      = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
-    filters_used        = models.CharField(max_length=50,null=True)
+    filter_used         = models.BooleanField(default=False, null=True)
     current_image       = models.ImageField(null=True)
     is_flagged          = models.BooleanField(default=False, null=True)
     by_admin            = models.BooleanField(default=False, null=True)

@@ -24,18 +24,6 @@ class App extends Component {
                 logged_in: false,
             }
         } else {
-            fetch('/api/user/current_user/', {
-                headers: new Headers({'Authorization': 'Token ' + token}),
-            })
-            .then(response => {
-                if (response.status !== 200) {
-                    return this.setState({placeholder: "Something went wrong"});
-                }
-
-                return response.json();
-            })
-            .then(data => this.setState({user_id: data.id}));
-
             this.state = {
                 token: token,
                 logged_in: true,
@@ -50,10 +38,17 @@ class App extends Component {
                 logged_in: false,
             });
         } else {
-            this.setState({
-                token: token,
-                logged_in: true,
-            });
+            fetch('/api/user/current_user/', {
+                headers: new Headers({'Authorization': 'Token ' + token}),
+            })
+            .then(response => {
+                if (response.status !== 200) {
+                    return this.setState({placeholder: "Something went wrong"});
+                }
+
+                return response.json();
+            })
+            .then(data => this.setState({user_id: data.id, token: token, logged_in: true}));
         }
     }
 

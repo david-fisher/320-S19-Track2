@@ -6,17 +6,13 @@ test_database = {"www.google.com": "1LfIc2e5AGfyMCZ5",
                  "www.moodle.umass.edu": "SAgQoYRsvSKNVXwd",
                  "www.umass.edu": "fQCPeau1TeR643Ft"}
 
+
 class DBAdapter:
 
     @staticmethod
-    def store_short_url(short_url):
-        short = ShortLink.objects.create(short_token=short_url)
-        short.save()
-
-    @staticmethod
-    def store_long_url(long_url):
-        long = ShortLink.objects.create(originalURL=long_url)
-        long.save()
+    def store_url(short_url, long_url):
+        url = ShortLink.objects.create(short_token=short_url, originalURL=long_url)
+        url.save()
 
     @staticmethod
     def check_short_url(short_url):
