@@ -14,10 +14,12 @@
   "environments": {
     "test": {
       "scripts": {
-        "postdeploy": "npm install --dev; npm run dev",
         "test-setup": "python manage.py collectstatic --noinput",
         "test": "python manage.py test"
       }
     }
+  },
+  "scripts": {
+    "postdeploy": "npm install --dev; npm run dev; python manage.py migrate"
   }
 }
