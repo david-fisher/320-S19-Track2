@@ -68,7 +68,7 @@ class Image(models.Model):
     user                = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     post                = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
     image_original      = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
-    filters_used        = models.CharField(max_length=50,null=True)
+    filter_used         = models.BooleanField(default=False, null=True)
     current_image       = models.ImageField(null=True)
     is_flagged          = models.BooleanField(default=False, null=True)
     by_admin            = models.BooleanField(default=False, null=True)
