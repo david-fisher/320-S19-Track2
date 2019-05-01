@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from members_only.models import Post, Comment, User, Image, ShortLink
+from members_only.models import Post, Comment, User, Image, ShortLink, VerificationCharge
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -11,7 +11,13 @@ class UserSerializer(serializers.ModelSerializer):
 class UserSetupSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('email', 'reset_code', 'password', 'first_name', 'last_name', 'address')
+        fields = ('email', 'reset_code', 'password', 'first_name', 'last_name', 'address', 'stripe_card')
+
+
+class VerificationChargeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VerificationCharge
+        fields = ('amount',) # With out the extra comma this will cause errors
 
 
 class PostSerializer(serializers.ModelSerializer):
