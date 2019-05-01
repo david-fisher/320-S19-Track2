@@ -11,3 +11,5 @@ uploads/
 .vscode/
 
 test_image_output/
+
+static/main.js
