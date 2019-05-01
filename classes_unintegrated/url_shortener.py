@@ -18,8 +18,8 @@ class URLShortener:
         # check if it is within the db
         while db_adapter.check_short_url(token):
             token = str(hex(random.getrandbits(32)))[2:]
-            db_adapter.store_short_url(token)
-            db_adapter.store_long_url(long_link)
+        db_adapter.store_short_url(token)
+        db_adapter.store_long_url(long_link)
         return token
 
     # retrieve short_url
