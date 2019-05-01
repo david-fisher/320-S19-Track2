@@ -95,7 +95,10 @@ const genNavbar = {
     border: '2px solid lightgrey',
     margin: '0px 2px',
     display: 'flex',
-    justifyContent: 'spaceAround'
+    justifyContent: 'spaceAround',
+    position: 'fixed',
+    top: '0',
+    width: '100%'
 };
 
 
