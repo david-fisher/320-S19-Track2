@@ -93,6 +93,13 @@ class ImageViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+class ShortLinkViewSet(viewsets.ModelViewSet):
+    queryset = ShortLink.objects.all()
+    serializer_class = ShortLinkSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+
+
 @api_view(['GET'])
 def link_shortening(request):
 
