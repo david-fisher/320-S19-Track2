@@ -18,7 +18,6 @@ class Login extends Component {
                 logged_in: false,
                 notificationText: '',
                 verRequestComplete: false,
-                loginRequestComplete: false,
                 needsVerification: false,
             }
         } else {
@@ -26,7 +25,6 @@ class Login extends Component {
                 logged_in: true,
                 notificationText: '',
                 verRequestComplete: true,
-                loginRequestComplete: true,
                 needsVerification: false,
             }
         }
@@ -94,8 +92,7 @@ class Login extends Component {
               this.checkIsVerified(response_data.token)
 
               this.setState({
-                logged_in: true,
-                loginRequestComplete: true,
+                logged_in: true
             });
               
           }
@@ -112,7 +109,7 @@ class Login extends Component {
 
     render() {
 
-        if(this.state.logged_in && this.state.verRequestComplete && this.state.loginRequestComplete){
+        if(this.state.logged_in && this.state.verRequestComplete){
             if(this.state.needsVerification){
                 return (<Redirect to="/user/verification"/>)
             }else{
