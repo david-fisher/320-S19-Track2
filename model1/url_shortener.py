@@ -1,6 +1,6 @@
 import random
 
-from classes_unintegrated.adapter import DBAdapter as dbAdapter
+from model1.adapter import DBAdapter as dbAdapter
 
 
 class URLShortener:
