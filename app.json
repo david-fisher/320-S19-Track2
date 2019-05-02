@@ -18,5 +18,13 @@
         "test": "python manage.py test"
       }
     }
-  }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
 }

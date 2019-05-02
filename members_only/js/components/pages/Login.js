@@ -69,7 +69,7 @@ class Login extends Component {
     render() {
         return this.state.logged_in ?
             (
-                <Redirect to="/feed"/>
+                <Redirect to="/homefeed"/>
             )
             : (
             <form onSubmit={this.handleSubmit}>

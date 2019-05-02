@@ -10,7 +10,8 @@ class Setup extends Component {
     this.state = {
       notificationText: "",
       notificationType: "success",
-      setupComplete: false
+        setupComplete: false,
+        clicked: false
     };
     this.onToken = (token, addresses) => (this.token = token.id);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -18,13 +19,16 @@ class Setup extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-
+      if(!this.state.clicked) {
+          event.preventDefault();
+          return;
+      }
     if (this.password.value != this.confirm_password.value) {
       this.setState({
         notificationText: "Your passwords don't match.",
         notificationType: "danger"
       });
-
+        this.state.clicked = false;
       event.preventDefault();
       return;
     }
@@ -34,7 +38,7 @@ class Setup extends Component {
         notificationText: "Access code is blank.",
         notificationType: "danger"
       });
-
+        this.state.clicked = false;
       event.preventDefault();
       return;
     }
@@ -44,7 +48,7 @@ class Setup extends Component {
         notificationText: "Email is blank.",
         notificationType: "danger"
       });
-
+        this.state.clicked = false;
       event.preventDefault();
       return;
     }
@@ -54,7 +58,7 @@ class Setup extends Component {
         notificationText: "Payment Incomplete.",
         notificationType: "danger"
       });
-
+        this.state.clicked = false;
       event.preventDefault();
       return;
     }
@@ -75,7 +79,7 @@ class Setup extends Component {
     xhr.addEventListener("readystatechange", event => {
       if (event.target.readyState === 4) {
         this.setState({
-          setupComplete: true
+            setupComplete: true
         });
       }
     });
@@ -86,7 +90,10 @@ class Setup extends Component {
 
     xhr.send(data);
   }
-
+    clickme(){
+        this.state.clicked = true;
+        console.log(this.state.clicked);
+    }
   render() {
     return this.state.setupComplete ? (
       <Redirect to={"/user/login"} />
@@ -197,7 +204,7 @@ class Setup extends Component {
               token={this.onToken}
             />
 
-            <div className="field" style={{ marginTop: "20px" }}>
+            <div onClick={() => this.clickme()} className="field" style={{ marginTop: "20px" }}>
               <p className="control">
                 <input
                   type="submit"
