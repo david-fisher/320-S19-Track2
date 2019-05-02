@@ -38,7 +38,7 @@ const c1 = {
 };
 
 const c11 = {
-    fontSize: '28px',
+    fontSize: '25px',
     textAlign:'center',
     marginTop: '5%'
 };

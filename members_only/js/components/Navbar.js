@@ -21,7 +21,7 @@ class Navbar extends Component {
                 <div id="navbarBasicExample" className="navbar-menu">
                     <div className="navbar-start">
 
-                        <NavLink to="/homefeed" className="navbar-item">
+                        <NavLink to="/homefeed" className="navbar-item" style={navPadding}>
                             Feed
                         </NavLink>
 
@@ -117,7 +117,7 @@ const navPadding = {
 
 const memberStyle = {
     fontWeight: 'bold',
-    fontSize: '30px',
+    fontSize: '25px',
     fontVariant: 'small-caps'
 };
 
