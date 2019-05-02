@@ -24,7 +24,7 @@ router.register(r'short-link', members_only.views.ShortLinkViewSet)
 
 urlpatterns = [
     path("", members_only.views.index, name="index"),
-    path("feed/", members_only.views.index, name="index"),
+    path("homefeed/", members_only.views.index, name="index"),
     path("user/login", members_only.views.index, name="index"),
     path("user/logout", members_only.views.index, name="index"),
     path("user/invite", members_only.views.index, name="index"),

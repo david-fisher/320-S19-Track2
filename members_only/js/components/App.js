@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import {BrowserRouter as Router, Route, Link, NavLink} from 'react-router-dom';
 import Login from "./pages/Login";
 import Navbar from "./Navbar";
-import Feed from "./pages/Feed";
+import HomeFeed from "./pages/HomeFeed";
 import Home from "./pages/Home";
 import Cookies from "universal-cookie";
 import Logout from "./pages/Logout";
@@ -38,19 +38,21 @@ class App extends Component {
             this.setState({
                 token: null,
                 logged_in: false,
+                user_id: null,
+                blocked_members: []
             });
         } else {
             fetch('/api/user/current_user/', {
-                headers: new Headers({'Authorization': 'Token ' + token}),
+                headers: new Headers({ 'Authorization': 'Token ' + token }),
             })
-            .then(response => {
-                if (response.status !== 200) {
-                    return this.setState({placeholder: "Something went wrong"});
-                }
-
-                return response.json();
-            })
-            .then(data => this.setState({user_id: data.id, token: token, logged_in: true}));
+                .then(response => {
+                    if (response.status !== 200) {
+                        return this.setState({ placeholder: "Something went wrong" });
+                    }
+                    return response.json();
+                })
+                .then(
+                    data => this.setState({ blocked_members: data.blocked_members, user_id: data.id, token: token, logged_in: true }));
         }
     }
 
@@ -67,9 +69,9 @@ class App extends Component {
                                    render={
                                        (props) => <Invite {...props} token={this.state.token}/>
                                    }/>
-                            <Route exact path="/feed"
-                                   render={
-                                       (props) => <Feed {...props} userID={this.state.user_id} token={this.state.token}/>
+                            <Route exact path="/homefeed"
+                                render={
+                                    (props) => <HomeFeed {...props} blockedMembers={this.state.blocked_members} userID={this.state.user_id} token={this.state.token} />
                                    }/>
                             <Route exact path="/user/logout"
                                    render={

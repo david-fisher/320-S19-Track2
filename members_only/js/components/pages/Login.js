@@ -113,7 +113,7 @@ class Login extends Component {
             if(this.state.needsVerification){
                 return (<Redirect to="/user/verification"/>)
             }else{
-                return (<Redirect to="/feed"/>)
+                return (<Redirect to="/homefeed"/>)
             }
         }else{
             return(
