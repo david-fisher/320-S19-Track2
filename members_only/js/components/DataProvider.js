@@ -107,14 +107,17 @@ class DataProvider extends Component {
             tempEmail = relevantUser['email'];
             tempName = relevantUser['first_name'] + " " + relevantUser['last_name'];
         }
+        let tempCreated = data.results[postIter2]['date_created'];
+        let timeArray = tempCreated.split('-').join(',').split('T').join(',').split(':').join(',').split(',');
+        //console.log(timeArray);
 
         return <div>
             <div className="w3-container w3-card w3-white w3-round w3-margin">
-                <span style={{ 'margin-top': '10px' }} className="w3-right w3-opacity">1 min ago</span>
+                <span style={{ 'margin-top': '10px' }} className="w3-right w3-opacity">{timeArray[1] + "/" + timeArray[2] + "/" + timeArray[0] + " at " + timeArray[3] + ":" + timeArray[4]}</span>
                 <div style={{ 'display': 'flex', 'align-items': 'flex-start' }}>
                     <h4 style={{ 'border-radius': '25px', 'background-color': 'steelblue', 'color': 'white', 'padding-left': '15px', 'padding-top': '5px', 'padding-bottom': '5px', 'padding-right': '15px', 'margin-top': '10px' }} >{tempName}</h4>
                 </div>
-                <p style={{ 'margin-left': '25px', 'margin-top': '5px', 'padding-left': '5px' }}>{data.results[postIter2]['content']}</p>
+                <p style={{ 'word-wrap': 'break-word','margin-left': '25px', 'margin-top': '5px', 'padding-left': '5px' }}>{data.results[postIter2]['content']}</p>
                 <hr class="w3-clear"></hr>
 
                 <form>
