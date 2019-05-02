@@ -59,7 +59,7 @@ class Verification extends Component {
 
   render() {
     return this.state.verified ? (
-      <Redirect to={"/feed"} />
+      <Redirect to={"/homefeed"} />
     ) : (
       <form onSubmit={this.handleSubmit}>
         <div className="columns">
