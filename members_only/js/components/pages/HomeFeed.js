@@ -107,22 +107,6 @@ class HomeFeed extends Component {
                     data => this.state.data
                 } />
 
-                <div className="w3-container w3-card w3-white w3-round w3-margin">
-                    <span style={{ 'margin-top': '10px' }} className="w3-right w3-opacity">1 min ago</span>
-                    <div style={{ 'display': 'flex', 'align-items': 'flex-start'}}>
-                        <h4 style={{ 'border-radius': '25px', 'background-color': 'steelblue', 'color': 'white', 'padding-left': '15px', 'padding-top': '5px', 'padding-bottom': '5px', 'padding-right': '15px', 'margin-top': '10px' }} >John Doeeeeeeeeeeeee</h4>
-                    </div>
-                    <p style={{ 'margin-left': '25px', 'margin-top': '5px', 'padding-left': '5px' }}>DAE fortnite burger?</p>
-                    <hr class="w3-clear"></hr>
-
-                    <form>
-                        <textarea type="text" style={{ 'resize': "none", 'width': "75%" }} className="w3-border w3-padding" placeholder="Leave a comment!"></textarea>
-                        <br></br>
-                        <button style={{ 'color': 'white', 'background-color': 'DarkSlateGray', 'margin-left': "0px", 'margin-top': "10px", 'margin-bottom': "30px" }} type="submit" className="w3-button w3-theme-d2 w3-margin-bottom"><i style={{'color':'white'}} className="fa fa-comment"></i> Comment</button>
-                    </form>
-                </div>
-
-
             </div>
         );
     }
