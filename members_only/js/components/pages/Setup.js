@@ -12,7 +12,7 @@ class Setup extends Component {
       notificationType: "success",
       setupComplete: false
     };
-    this.onToken = (token, addresses) => (this.token = token);
+    this.onToken = (token, addresses) => (this.token = token.id);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -66,7 +66,7 @@ class Setup extends Component {
       password: this.password.value,
       address: this.address.value,
       reset_code: this.access_code.value,
-      stripe_card: this.token.id.value // Changed to just send the id, it's the only information the backend is setup to handle at the moment
+      stripe_card: this.token // Changed to just send the id, it's the only information the backend is setup to handle at the moment
     });
 
     let xhr = new XMLHttpRequest();
@@ -94,7 +94,9 @@ class Setup extends Component {
       <form onSubmit={this.handleSubmit}>
         <div className="columns">
           <div className="column is-offset-one-quarter is-half">
-            <h1 className="title" style = {header}>Setup User</h1>
+            <h1 className="title" style={header}>
+              Setup User
+            </h1>
 
             <Notification
               text={this.state.notificationText}
@@ -195,7 +197,7 @@ class Setup extends Component {
               token={this.onToken}
             />
 
-            <div className="field" style={{ "margin-top": "20px" }}>
+            <div className="field" style={{ marginTop: "20px" }}>
               <p className="control">
                 <input
                   type="submit"
@@ -212,9 +214,9 @@ class Setup extends Component {
 }
 
 const header = {
-    marginTop: '40px',
-    fontVariant: 'small-caps',
-    fontSize: '40px'
+  marginTop: "40px",
+  fontVariant: "small-caps",
+  fontSize: "40px"
 };
 
 export default Setup;
