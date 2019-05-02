@@ -66,7 +66,22 @@ class HomeFeed extends Component {
 
     }
 
+    //currentPage = 1;
+    //baseEndpoint = "/api/post/";
+
+    //nextPage = () => {
+    //    //this.currentPage += 1;
+    //    //this.setState({});
+    //    //this.forceUpdate();
+    //    //return <DataProvider {...this.props} postNotification={this.state.notificationText} endpoint={this.baseEndpoint + "?page=" + this.currentPage} callerType="HomeFeed" token={this.props.token} render={
+    //    //    data => this.state.data
+    //    //} />
+    //}
+
     render() {
+        //console.log("rendering main");
+        //let endpointString = "/api/post/?page=" + this.currentPage;
+        //console.log("current page: main: " + this.currentPage);
         return (
             <div>
                 <h1 className="title" style={feedHeader}>Feed</h1>
@@ -90,6 +105,9 @@ class HomeFeed extends Component {
                 <DataProvider {...this.props} postNotification={this.state.notificationText} endpoint="/api/post/" callerType="HomeFeed" token={this.props.token} render={
                     data => this.state.data
                 } />
+
+
+
             </div>
         );
     }

@@ -6,6 +6,7 @@ class DataProvider extends Component {
     // temp variables to handle posts
     postIter = -1;
     tempUserCache = [];
+    currentPage = 1;
 
     constructor(props) {
         super(props);
@@ -27,17 +28,31 @@ class DataProvider extends Component {
     };
 
     loadData() {
-        fetch(this.props.endpoint, {
-            headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
-        })
-            .then(response => {
-                if (response.status !== 200) {
-                    return this.setState({ placeholder: "Something went wrong" });
-                }
+        if (this.props.callerType == "HomeFeed") {
+            fetch(this.props.endpoint + "?page=" + this.currentPage, {
+                headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
+            })
+                .then(response => {
+                    if (response.status !== 200) {
+                        return this.setState({ placeholder: "Something went wrong" });
+                    }
 
-                return response.json();
-            }) 
-            .then(data => { if (this.tempUserCache.length <= 0) { this.getUsers(); } this.setState({ data: data, loaded: true, callerType: this.props.callerType }) });
+                    return response.json();
+                })
+                .then(data => { if (this.tempUserCache.length <= 0) { this.getUsers(); } this.setState({ data: data, loaded: true, callerType: this.props.callerType }) });
+        }else{
+            fetch(this.props.endpoint, {
+                headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
+            })
+                .then(response => {
+                    if (response.status !== 200) {
+                        return this.setState({ placeholder: "Something went wrong" });
+                    }
+
+                    return response.json();
+                })
+                .then(data => { this.setState({ data: data, loaded: true, callerType: this.props.callerType }) });
+        }
     }
 
     getUsers = () => {
@@ -52,7 +67,7 @@ class DataProvider extends Component {
             })
             .then(
             data => {
-                console.log("inuser: " + data.results.length); this.tempUserCache = data.results; console.log("inuser2: " + this.tempUserCache.length);
+                this.tempUserCache = data.results;
                 this.setState({}); //empty refesh
             }
         );
@@ -69,6 +84,7 @@ class DataProvider extends Component {
         this.loadData();
       }
     }
+
 
     renderPost = () => {
 
@@ -101,6 +117,27 @@ class DataProvider extends Component {
         </div>
     }
 
+    nextPage = () => {
+        console.log("next page called!"); 
+        const { data } = this.state;
+        if (data['count'] <= (this.currentPage)*10 ) {
+            return;
+        }
+        //possibly check if the user is going too far (using count from API call)
+        this.currentPage += 1;
+        this.loadData();
+    }
+
+    previousPage = () => {
+        console.log("prev page called!");
+        if (this.currentPage === 1) {
+            //do nothing cause at the end, maybe a visual cue saying u cant go back more
+            return;
+        }
+        this.currentPage -= 1;
+        this.loadData();
+    }
+
     render() {
         const { data, loaded, placeholder } = this.state;
 
@@ -108,16 +145,21 @@ class DataProvider extends Component {
             if (this.state.callerType === "HomeFeed") {
                 let ta = [];
 
+                this.postIter = -1;
                 for (let i = 0; i < 10; i++) {
                     ta.push(this.renderPost());
                 }
 
                 this.postIter = -1;
-                this.tempUserCache = [];
+                this.tempUserCache = []; 
                 return <div>
                     {ta}
+                    <p>
+                        {<button onClick={this.previousPage}> Previous Page </button>}
+                        {<button onClick={this.nextPage}> Next Page </button>}
+                    </p>
                 </div>
-
+           
             } else {
                 return this.props.render(data.results); //breaks if not in Table form
             }
