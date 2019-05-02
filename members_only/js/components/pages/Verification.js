@@ -1,53 +1,67 @@
 import React, { Component } from "react";
 import Notification from "../Notification";
+import { Route, Redirect } from "react-router";
 
-class Verify extends Component {
+class Verification extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       notificationText: "",
-      notificationType: "success"
+      notificationType: "success",
+      verified: false
     };
+
 
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit(event) {
+    event.preventDefault();
+
+    if (1 != 1) {
+      this.setState({
+        notificationText: "Your passwords don't match.",
+        notificationType: "danger"
+      });
+
+      event.preventDefault();
+      return;
+    }
+
+
     let data = JSON.stringify({
       amount: this.amount.value
     });
 
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
 
     xhr.addEventListener("readystatechange", event => {
       if (event.target.readyState === 4) {
-        console.log(this.responseText);
-
         this.setState({
-          notificationText: "Invite sent."
+          verified: false
         });
       }
     });
 
-    xhr.open("PUT", "/api/user/verify");
+    xhr.open("PUT", "/api/user/verify/");
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.setRequestHeader("cache-control", "no-cache");
     xhr.setRequestHeader("Authorization", "Token " + this.props.token);
 
     xhr.send(data);
-
-    event.preventDefault();
   }
 
   render() {
-    return (
+    return this.state.verified ? (
+      <Redirect to={"/feed"} />
+    ) : (
       <form onSubmit={this.handleSubmit}>
         <div className="columns">
           <div className="column is-offset-one-quarter is-half">
             <h1 className="title" style={header}>
-              Verify
+              Verification
             </h1>
 
             <Notification
@@ -59,20 +73,18 @@ class Verify extends Component {
               <p className="control has-icons-left has-icons-right">
                 <input
                   className="input"
-                  type="email"
-                  placeholder="Email"
-                  ref={input => (this.email = input)}
+                  type="number"
+                  placeholder="Amount charged in cents"
+                  ref={input => (this.amount = input)}
                 />
-                <span className="icon is-small is-left">
-                  <i className="fas fa-envelope" />
-                </span>
               </p>
             </div>
-            <div className="field">
+
+            <div className="field" style={{ marginTop: "20px" }}>
               <p className="control">
                 <input
                   type="submit"
-                  value="Invite"
+                  value="Verify"
                   className="button is-success"
                 />
               </p>
@@ -90,4 +102,5 @@ const header = {
   fontSize: "40px"
 };
 
-export default Invite;
+export default Verification;
+

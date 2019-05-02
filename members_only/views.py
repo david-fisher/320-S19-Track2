@@ -66,7 +66,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"message": "Invalid data"})
 
     """ ADDED FOR TESTING PURPOSES, SHOULD BE CHECKED BY TORCH JUGGLERS """
-    @action(detail=False, methods=['put'], serializer_class=VerificationChargeSerializer, permission_classes=[])
+    @action(detail=False, methods=['put'], serializer_class=VerificationChargeSerializer, permission_classes=[IsAuthenticated])
     def verify(self, request):
         serializer = VerificationChargeSerializer(data=request.data)
         if serializer.is_valid():
