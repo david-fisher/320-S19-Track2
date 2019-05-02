@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view
@@ -6,6 +6,7 @@ from members_only.models import User, Post, Comment, Image, ShortLink, Verificat
 from members_only.serializers import UserSerializer, UserSetupSerializer, PostSerializer, CommentSerializer, ImageSerializer, ShortLinkSerializer, VerificationChargeSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+from django.shortcuts import redirect
 
 from members_only.payment_processing.payment_processing import PaymentProcessor, PaymentProcessorType, APIConnectionError, InvalidAPIKeyError, InvalidRequestError, CardDeclinedError, PaymentAdaptorError, UserNotSetupError, UserAlreadySetupError, NoVerificationChargeError
 
@@ -308,3 +309,10 @@ def verifyUser(user, serializer):
                 "success": False,
                 "message": "The server has encountered an exception."
             })
+
+
+def short_link_redirect(request, short):
+    short_link = get_object_or_404(ShortLink, short_token=short)
+    # response = redirect('https://github.com/david-fisher/320-S19-Track2/')
+    response = redirect(short_link.originalURL)
+    return response
