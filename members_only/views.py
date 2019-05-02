@@ -313,6 +313,5 @@ def verifyUser(user, serializer):
 
 def short_link_redirect(request, short):
     short_link = get_object_or_404(ShortLink, short_token=short)
-    # response = redirect('https://github.com/david-fisher/320-S19-Track2/')
     response = redirect(short_link.originalURL)
     return response
