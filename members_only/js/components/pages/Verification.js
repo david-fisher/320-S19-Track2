@@ -19,17 +19,6 @@ class Verification extends Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    if (1 != 1) {
-      this.setState({
-        notificationText: "Your passwords don't match.",
-        notificationType: "danger"
-      });
-
-      event.preventDefault();
-      return;
-    }
-
-
     let data = JSON.stringify({
       amount: this.amount.value
     });
@@ -39,9 +28,24 @@ class Verification extends Component {
 
     xhr.addEventListener("readystatechange", event => {
       if (event.target.readyState === 4) {
-        this.setState({
-          verified: false
-        });
+
+        var jsonResponse = JSON.parse(xhr.responseText);
+
+        if(jsonResponse.success){
+          
+          this.setState({
+            notificationText: xhr.response.message,
+            notificationType: "success",
+            verified: true
+          });
+
+        }else{
+          this.setState({
+            notificationText: "Incorrect Amount.",
+            notificationType: "danger",
+            verified: false
+          });
+        }
       }
     });
 
