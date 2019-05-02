@@ -44,14 +44,15 @@ class Login extends Component {
         xhr.addEventListener("readystatechange", event => {
             if (event.target.readyState === 4) {
                 let response_data = JSON.parse(event.target.responseText);
-                if(response_data.is_verified){
-                    this.props.updateToken(token);
+
+                this.props.updateToken(token);
+
+                if(response_data.is_verified){                  
                     this.setState({
                         verRequestComplete: true,
                         needsVerification: false,
                     });
                 }else{
-                    this.props.updateToken(token);
                     this.setState({
                         verRequestComplete: true,
                         needsVerification: true,
@@ -90,8 +91,6 @@ class Login extends Component {
               cookies.set('user_token', response_data.token, {path: "/"});
 
               this.checkIsVerified(response_data.token)
-
-              
 
               this.setState({
                 logged_in: true,
