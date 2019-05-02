@@ -9,6 +9,7 @@ import Cookies from "universal-cookie";
 import Logout from "./pages/Logout";
 import Invite from "./pages/Invite";
 import Setup from "./pages/Setup";
+import { Verify } from 'crypto';
 
 
 class App extends Component {
@@ -76,6 +77,10 @@ class App extends Component {
                             <Route exact path="/user/login"
                                    render={
                                        (props) => <Login {...props} updateToken={this.updateToken.bind(this)}/>
+                                   }/>
+                            <Route exact path="/user/verify"
+                                   render={
+                                       (props) => <Verify {...props} updateToken={this.updateToken.bind(this)}/>
                                    }/>
                         </div>
                     </div>
