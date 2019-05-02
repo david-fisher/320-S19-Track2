@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import DataProvider from "../DataProvider";
 import Table from "../Table";
 import Notification from "../Notification";
+import './frontend_style.css'
 
 class HomeFeed extends Component {
     constructor(props) {
@@ -82,6 +83,7 @@ class HomeFeed extends Component {
         //console.log("rendering main");
         //let endpointString = "/api/post/?page=" + this.currentPage;
         //console.log("current page: main: " + this.currentPage);
+        //let test = [1,2,3]
         return (
             <div>
                 <h1 className="title" style={feedHeader}>Feed</h1>
@@ -102,11 +104,9 @@ class HomeFeed extends Component {
                     </div>
                 </form>
 
-                <DataProvider {...this.props} postNotification={this.state.notificationText} endpoint="/api/post/" callerType="HomeFeed" token={this.props.token} render={
+                <DataProvider {...this.props} postNotification={this.state.notificationText} endpoint="/api/post/" blockedMembers={this.props.blockedMembers} callerType="HomeFeed" token={this.props.token} render={
                     data => this.state.data
                 } />
-
-
 
             </div>
         );

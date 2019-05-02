@@ -36,7 +36,8 @@ class App extends Component {
             this.setState({
                 token: null,
                 logged_in: false,
-                user_id: null
+                user_id: null,
+                blocked_members: []
             });
         } else {
             fetch('/api/user/current_user/', {
@@ -49,7 +50,7 @@ class App extends Component {
                     return response.json();
                 })
                 .then(
-                    data => this.setState({ user_id: data.id, token: token, logged_in: true }));
+                    data => this.setState({ blocked_members: data.blocked_members, user_id: data.id, token: token, logged_in: true }));
         }
     }
 
@@ -68,7 +69,7 @@ class App extends Component {
                                    }/>
                             <Route exact path="/homefeed"
                                 render={
-                                    (props) => <HomeFeed {...props} userID={this.state.user_id} token={this.state.token} />
+                                    (props) => <HomeFeed {...props} blockedMembers={this.state.blocked_members} userID={this.state.user_id} token={this.state.token} />
                                    }/>
                             <Route exact path="/user/logout"
                                    render={
