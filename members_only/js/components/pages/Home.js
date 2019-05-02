@@ -5,7 +5,7 @@ class Home extends Component {
         return (
             <div>
                 <h1 style={header}> Welcome to Members Only </h1>
-                <div className="container">
+                <div className="container" style={all}>
                     <div className="c1" style = {c1}> Members Only is the newest and most exclusive social media platform that everyone is using.
                     </div>
                     <div className="c11" style={c11}> All
@@ -25,6 +25,10 @@ const header = {
     fontVariant: 'small-caps',
     textAlign: 'center',
     marginTop: '5%'
+};
+
+const all = {
+    fontVariant: 'small-caps'
 };
 
 const c1 = {
