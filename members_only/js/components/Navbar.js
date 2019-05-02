@@ -5,9 +5,9 @@ class Navbar extends Component {
     render() {
         return this.props.loggedIn ? (
             <nav className="navbar" role="navigation" aria-label="main navigation" style={genNavbar}>
-                <div className="navbar-brand">
-                    <Link to="/" className="navbar-item">
-                        Members Only
+                <div className="navbar-brand" style = {navFloat}>
+                    <Link to="/" className="navbar-item" style = {memberStyle}>
+                       <b>Members Only</b>
                     </Link>
 
                     <a role="button" className="navbar-burger burger" aria-label="menu" aria-expanded="false"
@@ -21,22 +21,22 @@ class Navbar extends Component {
                 <div id="navbarBasicExample" className="navbar-menu">
                     <div className="navbar-start">
 
-                        <NavLink to="/feed" className="navbar-item">
+                        <NavLink to="/feed" className="navbar-item" style={navPadding}>
                             Feed
                         </NavLink>
 
-                        <NavLink to="/user/invite" className="navbar-item">
+                        <NavLink to="/user/invite" className="navbar-item" style={navPadding}>
                             Invite
                         </NavLink>
 
-                        <a href="/api" className="navbar-item">
+                        <a href="/api" className="navbar-item" style={navPadding}>
                             API Documentation
                         </a>
                     </div>
 
                     <div className="navbar-end">
                         <div className="navbar-item">
-                            <div className="buttons">
+                            <div className="buttons" style={navPadding}>
                                 <Link to="/user/logout" className="button is-success">
                                     Log out
                                 </Link>
@@ -47,9 +47,9 @@ class Navbar extends Component {
             </nav>
         ) : (
             <nav className="navbar" role="navigation" aria-label="main navigation" style = {genNavbar}>
-                <div className="navbar-brand">
-                    <Link to="/" className="navbar-item">
-                        Members Only
+                <div className="navbar-brand" style={navFloat}>
+                    <Link to="/" className="navbar-item" style = {memberStyle}>
+                      <b>Members Only</b>
                     </Link>
 
                     <a role="button" className="navbar-burger burger" aria-label="menu" aria-expanded="false"
@@ -60,7 +60,7 @@ class Navbar extends Component {
                     </a>
                 </div>
 
-                <div id="navbarBasicExample" className="navbar-menu">
+                <div id="navbarBasicExample" className="navbar-menu" style={navPadding}>
                     <div className="navbar-start">
                         <a href="/api" className="navbar-item">
                             API Documentation
@@ -98,10 +98,27 @@ const genNavbar = {
     justifyContent: 'spaceAround',
     position: 'fixed',
     top: '0',
-    width: '100%'
+    width: '100%',
+    paddingRight: '50px',
+    paddingLeft: '50px',
+    textAlign: 'center'
 };
 
+const navFloat = {
+    marginLeft: '10%'
+};
 
+const navPadding = {
+    paddingRight: '50px',
+    paddingLeft: '50px',
+    textAlign: 'center',
+    fontVariant: 'small-caps'
+};
 
+const memberStyle = {
+    fontWeight: 'bold',
+    fontSize: '30px',
+    fontVariant: 'small-caps'
+};
 
 export default Navbar;
