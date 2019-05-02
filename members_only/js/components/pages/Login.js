@@ -45,6 +45,7 @@ class Login extends Component {
             if (event.target.readyState === 4) {
                 let response_data = JSON.parse(event.target.responseText);
 
+                // updateToken must be called in this request to stop the page from redirecting early
                 this.props.updateToken(token);
 
                 if(response_data.is_verified){                  
