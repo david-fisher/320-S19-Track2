@@ -116,14 +116,14 @@ class ImageFilterHandler:
             if filter_args:
                 # trying to call filter w/ filter_args
                 try:
-                    filtered_image = filter_class.filter(image, **filter_args)
+                    filtered_image = filter_class.filter(filtered_image, **filter_args)
                 # invalid filter arguments
                 except TypeError:
                     print('invalid filter_args: ')
                     print(filter_args)
                     continue
             else:
-                filtered_image = filter_class.filter(image)
+                filtered_image = filter_class.filter(filtered_image)
         return filtered_image
 
     @staticmethod
