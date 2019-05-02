@@ -96,7 +96,7 @@ class Setup extends Component {
     }
   render() {
     return this.state.setupComplete ? (
-      <Redirect to={"/user/login"} />
+      <Redirect to={"/user/verification"} />
     ) : (
       <form onSubmit={this.handleSubmit}>
         <div className="columns">
