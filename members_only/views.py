@@ -22,8 +22,8 @@ def index(request):
     return render(request, "index.html")
 
 
-def feed(request):
-    return render(request, "feed.html")
+def homefeed(request):
+    return render(request, "HomeFeed.html")
 
 
 # Back End Views
