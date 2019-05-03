@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.contrib import admin
 from rest_framework import routers
 from rest_framework.authtoken import views
@@ -29,8 +29,10 @@ urlpatterns = [
     path("user/logout", members_only.views.index, name="index"),
     path("user/invite", members_only.views.index, name="index"),
     path("user/setup", members_only.views.index, name="index"),
+    path("user/verification", members_only.views.index, name="index"),
     path('api/', include(router.urls)),
     path("admin/", admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api-token-auth/', views.obtain_auth_token),
+    re_path(r'^r/(?P<short>[a-zA-Z0-9]{6,10})', members_only.views.short_link_redirect)
 ]

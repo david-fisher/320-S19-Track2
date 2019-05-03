@@ -67,6 +67,10 @@ class HomeFeed extends Component {
 
     }
 
+    componentWillMount() {
+        console.log("homefeed mount");
+    }
+
     //currentPage = 1;
     //baseEndpoint = "/api/post/";
 
@@ -93,7 +97,7 @@ class HomeFeed extends Component {
                 <form onSubmit={this.handleSubmit}>
                     <div className="field">
                         <p className="control">
-                            <textarea className="textarea" placeholder="Write your post here."
+                            <textarea style={{ 'resize': "none"}} className="textarea" placeholder="Write your post here."
                                    ref={(input) => this.post = input}/>
                         </p>
                     </div>
@@ -104,7 +108,7 @@ class HomeFeed extends Component {
                     </div>
                 </form>
 
-                <DataProvider {...this.props} postNotification={this.state.notificationText} endpoint="/api/post/" blockedMembers={this.props.blockedMembers} callerType="HomeFeed" token={this.props.token} render={
+                <DataProvider {...this.props} userID={this.props.userID} postNotification={this.state.notificationText} endpoint="/api/post/" blockedMembers={this.props.blockedMembers} callerType="HomeFeed" token={this.props.token} render={
                     data => this.state.data
                 } />
 
