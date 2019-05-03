@@ -34,15 +34,13 @@ class UserViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
     def create(self, request):
-
-        response = super().create(request)
-
         if request.user.points < settings.POINT_COST_FOR_INVITE:
             return Response({"success":False})
 
         request.user.points -= settings.POINT_COST_FOR_INVITE
-
         request.user.save()
+
+        response = super().create(request)
 
         return Response({"success":True})
 

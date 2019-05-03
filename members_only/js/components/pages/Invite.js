@@ -27,9 +27,20 @@ class Invite extends Component {
           if (event.target.readyState === 4) {
             console.log(this.responseText);
 
-            this.setState({
-                notificationText: "Invite sent."
-            });
+            var jsonResponse = JSON.parse(xhr.responseText);
+
+            if(jsonResponse.success){
+                this.setState({
+                    notificationText: "Invite sent.",
+                    notificationType: "success"
+                });
+            }else{
+                this.setState({
+                    notificationText: "Not enough points.",
+                    notificationType: "danger",
+                });
+            }
+
           }
         });
 
