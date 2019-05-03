@@ -8,6 +8,10 @@ class DataProvider extends Component {
     // temp variables to handle posts
     postIter = -1;
     tempUserCache = [];
+
+    tempAllComments = [];
+    commentPageIter = 1;
+
     currentPage = 1;
 
     constructor(props) {
@@ -30,6 +34,23 @@ class DataProvider extends Component {
         time: Date.now()
     };
 
+    ass = () => {
+        return "hi";
+    }
+
+    loadCommentPage = () => {
+        fetch("/api/comment/?page=" + this.commentPageIter, {
+            headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
+        })
+            .then(response => {
+                if (response.status !== 200) {
+                    return this.setState({ placeholder: "Something went wrong" });
+                }
+
+                return response.json();
+            })
+    }
+
     loadData() {
         if (this.props.callerType == "HomeFeed") {
             fetch(this.props.endpoint + "?page=" + this.currentPage, {
@@ -43,7 +64,132 @@ class DataProvider extends Component {
                     return response.json();
                 })
                 .then(data => { if (this.tempUserCache.length <= 0) { this.getUsers(); } this.setState({ blocked_members: this.props.blockedMembers, data: data, loaded: true, callerType: this.props.callerType }) });
-        }else{
+
+
+            let temp = fetch("/api/comment/?page=" + this.commentPageIter, {
+                headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
+            }).then(response => {
+                if (response.status !== 200) {
+                    return this.setState({ placeholder: "Something went wrong" });
+                }
+
+                return response.json();
+                }).then(data => {
+                    //console.log(data);
+                    //console.log(data['count']);
+                    let tempCommentNum = data['count'];
+                    if (tempCommentNum === this.tempAllComments.length) {
+                        return;
+                    }
+
+                    let tempIter = 0;
+                    this.tempAllComments = []; //wipe to reset
+
+                    if (tempIter < tempCommentNum) { //go through every single comment
+                        console.log("currently tempiter is " + tempIter + " and num to reach is " + tempCommentNum);
+                        fetch("/api/comment/?page=" + this.commentPageIter, {
+                            headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
+                        }).then(response => {
+                            if (response.status !== 200) {
+                                return this.setState({ placeholder: "Something went wrong" });
+                            }
+
+                            return response.json();
+                            }).then( innerData => {
+
+                                for (let i = 0; i < innerData.results.length; i++) { //for every comment on that page
+                                    console.log("found a comment, adding!");
+                                    tempIter += 1;
+                                    this.tempAllComments.push(innerData.results[i]);
+                                }
+                                this.commentPageIter += 1; //increment page and continue until count is filled.
+
+                            });
+
+                    }
+                    if (tempIter < tempCommentNum) { //go through every single comment
+                        console.log("currently tempiter is " + tempIter + " and num to reach is " + tempCommentNum);
+                        fetch("/api/comment/?page=" + this.commentPageIter, {
+                            headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
+                        }).then(response => {
+                            if (response.status !== 200) {
+                                return this.setState({ placeholder: "Something went wrong" });
+                            }
+
+                            return response.json();
+                        }).then(innerData => {
+
+                            for (let i = 0; i < innerData.results.length; i++) { //for every comment on that page
+                                console.log("found a comment, adding!");
+                                tempIter += 1;
+                                this.tempAllComments.push(innerData.results[i]);
+                            }
+                            this.commentPageIter += 1; //increment page and continue until count is filled.
+
+                        });
+
+                    }
+                    if (tempIter < tempCommentNum) { //go through every single comment
+                        console.log("currently tempiter is " + tempIter + " and num to reach is " + tempCommentNum);
+                        fetch("/api/comment/?page=" + this.commentPageIter, {
+                            headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
+                        }).then(response => {
+                            if (response.status !== 200) {
+                                return this.setState({ placeholder: "Something went wrong" });
+                            }
+
+                            return response.json();
+                        }).then(innerData => {
+
+                            for (let i = 0; i < innerData.results.length; i++) { //for every comment on that page
+                                console.log("found a comment, adding!");
+                                tempIter += 1;
+                                this.tempAllComments.push(innerData.results[i]);
+                            }
+                            this.commentPageIter += 1; //increment page and continue until count is filled.
+
+                        });
+
+                    }
+
+                });
+
+            //let temp = this.loadCommentPage();
+            //temp.then(response => {
+            //    console.log(response);
+            //    console.log("^ :)");
+            //});
+            //let temp2 = this.ass();
+            //console.log(temp);
+            //console.log(temp2);
+        //this.loadCommentPage().then( tempCommentPage => {
+        //    let tempCommentNum = tempCommentPage['count'];
+        //    if(tempCommentNum === this.tempAllComments.length) {
+        //        return;
+        //    }
+        //    let tempIter = 0;
+        //    this.tempAllComments = []; //wipe to reset
+        //    while (tempIter < tempCommentNum) { //not sure how fucked waiting for fetches will be
+        //        //let tempCommentPage3 = this.loadCommentPage();
+        //        break;
+
+        //        //    .then(response => {
+        //        //    for (let i = 0; i < response.results.length; i++) { //for every comment on that page
+        //        //        tempIter += 1;
+        //        //        this.tempAllComments.push(response.results[i]);
+        //        //    }
+        //        //    this.commentPageIter += 1; //increment page and continue until count is filled.
+        //        //});
+        //        //let tempPageResults = this.loadCommentPage().results; //wait for it?
+        //        //for (let i = 0; i < tempPageResults.length; i++) { //for every comment on that page
+        //        //    tempIter += 1;
+        //        //    this.tempAllComments.push(tempPageResults[i]);
+        //        //}
+        //        //this.commentPageIter += 1; //increment page and continue until count is filled.
+        //    }
+        //});
+
+        } else {
             fetch(this.props.endpoint, {
                 headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
             })
@@ -122,6 +268,13 @@ class DataProvider extends Component {
         }
         let tempCreated = data.results[postIter2]['date_created'];
         let timeArray = tempCreated.split('-').join(',').split('T').join(',').split(':').join(',').split(',');
+        let tempContent = data.results[postIter2]['content'];
+        //TODO: if content has #, make the text after it until a space is reached blue
+        //if (tempContent.includes('#')) {
+        //}
+
+
+
         //console.log(timeArray);
 
         //todo: add block user button. 
