@@ -3,7 +3,9 @@ import { Route, Redirect} from 'react-router'
 import Cookies from 'universal-cookie';
 import Notification from "../Notification";
 
+
 class Login extends Component {
+
     constructor(props) {
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -14,14 +16,51 @@ class Login extends Component {
         if (token == null) {
             this.state = {
                 logged_in: false,
-                notificationText: ''
+                notificationText: '',
+                verRequestComplete: false,
+                needsVerification: false,
             }
         } else {
             this.state = {
                 logged_in: true,
-                notificationText: ''
+                notificationText: '',
+                verRequestComplete: true,
+                needsVerification: false,
             }
         }
+    }
+
+    checkIsVerified(token) {
+        let xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.open("GET", "/api/user/current_user/");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("cache-control", "no-cache");
+        xhr.setRequestHeader("Authorization", "Token " + token);
+
+        xhr.addEventListener("readystatechange", event => {
+            if (event.target.readyState === 4) {
+                let response_data = JSON.parse(event.target.responseText);
+
+                // updateToken must be called in this request to stop the page from redirecting early
+                this.props.updateToken(token);
+
+                if(response_data.is_verified){                  
+                    this.setState({
+                        verRequestComplete: true,
+                        needsVerification: false,
+                    });
+                }else{
+                    this.setState({
+                        verRequestComplete: true,
+                        needsVerification: true,
+                    });
+                }
+            }
+          });
+
+        xhr.send();
     }
 
     handleSubmit(event) {
@@ -50,10 +89,12 @@ class Login extends Component {
               const cookies = new Cookies();
               cookies.set('user_token', response_data.token, {path: "/"});
 
-              this.props.updateToken(response_data.token);
+              this.checkIsVerified(response_data.token)
+
               this.setState({
-                  logged_in: true
-              })
+                logged_in: true
+            });
+              
           }
         });
 
@@ -67,12 +108,16 @@ class Login extends Component {
     }
 
     render() {
-        return this.state.logged_in ?
-            (
-                <Redirect to="/homefeed"/>
-            )
-            : (
-            <form onSubmit={this.handleSubmit}>
+
+        if(this.state.logged_in && this.state.verRequestComplete){
+            if(this.state.needsVerification){
+                return (<Redirect to="/user/verification"/>)
+            }else{
+                return (<Redirect to="/homefeed"/>)
+            }
+        }else{
+            return(
+                <form onSubmit={this.handleSubmit}>
                 <div className="columns">
                     <div className="column is-offset-one-quarter is-half">
                         <h1 className="title" style={header}>Login</h1>
@@ -105,7 +150,8 @@ class Login extends Component {
                     </div>
                 </div>
             </form>
-        );
+            );
+        }
     }
 }
 
