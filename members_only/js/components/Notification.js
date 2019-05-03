@@ -19,10 +19,10 @@ class Notification extends Component {
 
     render() {
 
-        //if (this.props.text == "" || this.shouldHide) {
-        //    this.shouldHide = false;
-        //    return (<div />)
-        //}
+        if (this.props.text == "" || this.shouldHide) {
+            this.shouldHide = false;
+            return (<div />)
+        }
 
         return (
             <div className={"notification is-" + this.props.type}>

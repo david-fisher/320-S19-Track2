@@ -11,6 +11,7 @@ class DataProvider extends Component {
 
     tempAllComments = [];
     commentPageIter = 1;
+    tempIter = 0;
 
     currentPage = 1;
 
@@ -82,11 +83,11 @@ class DataProvider extends Component {
                         return;
                     }
 
-                    let tempIter = 0;
+                    this.tempIter = 0;
                     this.tempAllComments = []; //wipe to reset
 
-                    if (tempIter < tempCommentNum) { //go through every single comment
-                        console.log("currently tempiter is " + tempIter + " and num to reach is " + tempCommentNum);
+                    if (this.tempIter < tempCommentNum) { //go through every single comment
+                        console.log("currently tempiter is " + this.tempIter + " and num to reach is " + tempCommentNum);
                         fetch("/api/comment/?page=" + this.commentPageIter, {
                             headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
                         }).then(response => {
@@ -99,56 +100,12 @@ class DataProvider extends Component {
 
                                 for (let i = 0; i < innerData.results.length; i++) { //for every comment on that page
                                     console.log("found a comment, adding!");
-                                    tempIter += 1;
+                                    this.tempIter += 1;
                                     this.tempAllComments.push(innerData.results[i]);
                                 }
                                 this.commentPageIter += 1; //increment page and continue until count is filled.
 
                             });
-
-                    }
-                    if (tempIter < tempCommentNum) { //go through every single comment
-                        console.log("currently tempiter is " + tempIter + " and num to reach is " + tempCommentNum);
-                        fetch("/api/comment/?page=" + this.commentPageIter, {
-                            headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
-                        }).then(response => {
-                            if (response.status !== 200) {
-                                return this.setState({ placeholder: "Something went wrong" });
-                            }
-
-                            return response.json();
-                        }).then(innerData => {
-
-                            for (let i = 0; i < innerData.results.length; i++) { //for every comment on that page
-                                console.log("found a comment, adding!");
-                                tempIter += 1;
-                                this.tempAllComments.push(innerData.results[i]);
-                            }
-                            this.commentPageIter += 1; //increment page and continue until count is filled.
-
-                        });
-
-                    }
-                    if (tempIter < tempCommentNum) { //go through every single comment
-                        console.log("currently tempiter is " + tempIter + " and num to reach is " + tempCommentNum);
-                        fetch("/api/comment/?page=" + this.commentPageIter, {
-                            headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
-                        }).then(response => {
-                            if (response.status !== 200) {
-                                return this.setState({ placeholder: "Something went wrong" });
-                            }
-
-                            return response.json();
-                        }).then(innerData => {
-
-                            for (let i = 0; i < innerData.results.length; i++) { //for every comment on that page
-                                console.log("found a comment, adding!");
-                                tempIter += 1;
-                                this.tempAllComments.push(innerData.results[i]);
-                            }
-                            this.commentPageIter += 1; //increment page and continue until count is filled.
-
-                        });
 
                     }
 
