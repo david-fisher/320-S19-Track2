@@ -34,6 +34,17 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
+    def create(self, request):
+        if request.user.points < settings.POINT_COST_FOR_INVITE:
+            return Response({"success":False})
+
+        request.user.points -= settings.POINT_COST_FOR_INVITE
+        request.user.save()
+
+        response = super().create(request)
+
+        return Response({"success":True})
+
     @action(detail=False, methods=['post'], serializer_class=UserSetupSerializer, permission_classes=[])
     def setup(self, request):
         serializer = UserSetupSerializer(data=request.data)
