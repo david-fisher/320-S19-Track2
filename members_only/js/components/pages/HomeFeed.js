@@ -67,6 +67,10 @@ class HomeFeed extends Component {
 
     }
 
+    componentWillMount() {
+        console.log("homefeed mount");
+    }
+
     //currentPage = 1;
     //baseEndpoint = "/api/post/";
 

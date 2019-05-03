@@ -7,7 +7,7 @@ class DataProvider extends Component {
 
     // temp variables to handle posts
     postIter = -1;
-    tempUserCache = [];
+    //tempUserCache = [];
 
     tempAllComments = [];
 
@@ -42,7 +42,8 @@ class DataProvider extends Component {
         callerType: "hoi",
         loaded: false,
         placeholder: "Loading...",
-        time: Date.now()
+        time: Date.now(),
+        tempUserCache: []
         //tempAllComments: []
     };
 
@@ -109,6 +110,7 @@ class DataProvider extends Component {
     //}
 
     loadData() {
+        console.log("loaddata");
         if (this.props.callerType == "HomeFeed") {
             fetch(this.props.endpoint + "?page=" + this.currentPage, {
                 headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
@@ -121,8 +123,8 @@ class DataProvider extends Component {
                     return response.json();
                 })
                 .then(data => {
-                    //if (this.tempUserCache.length <= 0) { this.getUsers(); }
-                    this.getUsers(); //do it every time to prevent bugs, slower but who cares
+                    if (this.state.tempUserCache.length <= 0) { this.getUsers(); } else { console.log("user cache exists");}
+                    //this.getUsers(); //do it every time to prevent bugs, slower but who cares
 
                     if (this.tempAllComments.length <= 0 || this.madeNewComment) {
                         this.getComments();
@@ -244,22 +246,51 @@ class DataProvider extends Component {
             })
             .then(
             data => {
-                this.tempUserCache = data.results;
-                this.setState({}); //empty refesh
+                //tempUserCache = data.results;
+                this.setState({ tempUserCache: data.results }); 
+                //this.loadData(); //uh?
             }
         );
                     
     }
+
+    getUserNoState = () => {
+        fetch('/api/user/', {
+            headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
+        })
+            .then(response => {
+                if (response.status !== 200) {
+                    return this.setState({ placeholder: "Something went wrong" });
+                }
+                return response.json();
+            })
+            .then(
+                data => {
+                    if (data['count'] != this.state.tempUserCache.length && data['count'] <= 10) {
+                        console.log("UPADTING XAUSE NEW USER!");
+                        this.getUsers(); //update known when new users come to exist. only to 10 cuz woops
+                    }
+                }
+            );
+
+    }
         
     componentWillMount() {
+        console.log("willmount");
         this.loadData();
     }
 
     componentDidUpdate(prevProps) {
-
-      if (this.props.postNotification !== prevProps.postNotification) {
-        this.loadData();
-      }
+        //console.log("update owo");
+        //console.log(this.state.tempUserCache.length);
+        if (this.props.postNotification !== prevProps.postNotification) {
+            this.loadData();
+        } else {
+            if (this.state.tempUserCache.length <= 0) {
+                console.log("didupdate user from prop");
+                this.getUsers();
+            }
+        }
     }
 
     handleSubmit(event, testVal) {
@@ -337,11 +368,11 @@ class DataProvider extends Component {
             }
         }
 
-        let emailCheck = (this.tempUserCache.length - data.results[postIter2]['user']);
-        let tempEmail = "_loading_"; //placeholders while API loads /api/users/
-        let tempName = "_loading_";
+        let emailCheck = (this.state.tempUserCache.length - data.results[postIter2]['user']);
+        let tempEmail = "Loading..."; //placeholders while API loads /api/users/
+        let tempName = "Loading...";
         if (emailCheck >= 0) { //email check is basically universal
-            let relevantUser = this.tempUserCache[this.tempUserCache.length - data.results[postIter2]['user']];
+            let relevantUser = this.state.tempUserCache[this.state.tempUserCache.length - data.results[postIter2]['user']];
             //^ gets the appropriate user data from api/users/ for the guy who made the post
             tempEmail = relevantUser['email'];
             tempName = relevantUser['first_name'] + " " + relevantUser['last_name'];
@@ -362,7 +393,7 @@ class DataProvider extends Component {
             tempComments = [];
             for (let i = 0; i < this.tempAllComments[0].results.length; i++) { //page 0 is 0 here, more pages later?
                 if (data.results[postIter2]['id'] === this.tempAllComments[0].results[i]['post']) {
-                    let tempCommentName = "_loading_"
+                    let tempCommentName = "Loading..."
                     if (emailCheck >= 0) {
                         //console.log("tempusercache is " + this.tempUserCache.length);
                         //console.log("the index i want is " + (this.tempUserCache.length - this.tempAllComments[0].results[i]['user']));
@@ -370,7 +401,7 @@ class DataProvider extends Component {
                         //console.log("the value inside our thing is " + this.tempUserCache[ (this.tempUserCache.length - this.tempAllComments[0].results[i]['user']) ]);
                         //console.log("the email inside our thing is " + this.tempUserCache[(this.tempUserCache.length - this.tempAllComments[0].results[i]['user'])]['email']);
                         //let finalWhatever
-                        tempCommentName = this.tempUserCache[(this.tempUserCache.length - this.tempAllComments[0].results[i]['user'])]['first_name'] + " " + this.tempUserCache[(this.tempUserCache.length - this.tempAllComments[0].results[i]['user'])]['last_name'];
+                        tempCommentName = this.state.tempUserCache[(this.state.tempUserCache.length - this.tempAllComments[0].results[i]['user'])]['first_name'] + " " + this.state.tempUserCache[(this.state.tempUserCache.length - this.tempAllComments[0].results[i]['user'])]['last_name'];
                         //console.log(finalWhatever);
                         //tempCommentName = this.tempUserCache[this.tempUserCache.length - this.tempAllComments[0].results[i]['user']];
                     }
@@ -458,8 +489,10 @@ class DataProvider extends Component {
     render() {
         const { data, loaded, placeholder } = this.state;
 
+        this.getUserNoState();
+
         let errorThing = <div />;
-        if (this.drawError && this.tempUserCache.length>0) {
+        if (this.drawError && this.state.tempUserCache.length>0) {
         const { data, loaded, placeholder } = this.state;
             errorThing = <Notification text={"Error, invalid page!"} type={"danger"} />;
             this.drawError = false;
@@ -482,7 +515,7 @@ class DataProvider extends Component {
                 //this.comment = [];
                 //this.commentPostId = [];
 
-                this.tempUserCache = []; 
+                //this.tempUserCache = []; 
                 return <div>
                     {ta}
                     <p>
