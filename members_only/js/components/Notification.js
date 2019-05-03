@@ -19,9 +19,9 @@ class Notification extends Component {
 
     render() {
 
-        if (this.props.text == "" || this.shouldHide) {
-            this.shouldHide = false;
-            return (<div />)
+        if (this.props.text == "") {
+            //this.shouldHide = false;
+            return (<div />);
         }
 
         return (

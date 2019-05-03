@@ -104,7 +104,7 @@ class HomeFeed extends Component {
                     </div>
                 </form>
 
-                <DataProvider {...this.props} postNotification={this.state.notificationText} endpoint="/api/post/" blockedMembers={this.props.blockedMembers} callerType="HomeFeed" token={this.props.token} render={
+                <DataProvider {...this.props} userID={this.props.userID} postNotification={this.state.notificationText} endpoint="/api/post/" blockedMembers={this.props.blockedMembers} callerType="HomeFeed" token={this.props.token} render={
                     data => this.state.data
                 } />
 
