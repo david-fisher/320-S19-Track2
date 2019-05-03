@@ -273,8 +273,8 @@ class DataProvider extends Component {
         console.log("next page called!"); 
         const { data } = this.state;
         if (data['count'] <= (this.currentPage) * 10) {
-            this.drawError = true;
-            this.loadData();
+            //this.drawError = true;
+            //this.loadData();
             return;
         }
         //possibly check if the user is going too far (using count from API call)
@@ -287,8 +287,8 @@ class DataProvider extends Component {
         console.log("prev page called!");
         if (this.currentPage === 1) {
             //do nothing cause at the end, maybe a visual cue saying u cant go back more
-            this.drawError = true;
-            this.loadData();
+            //this.drawError = true;
+            //this.loadData();
             return;
         }
         this.currentPage -= 1;
