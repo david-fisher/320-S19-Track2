@@ -3,7 +3,9 @@ from os import listdir
 from os.path import isfile, join
 import re
 import json
-from members_only.models import User, Post, Comment, CreditCard, Image, Filter
+# from members_only.models import User, Post, Comment, CreditCard, Image, Filter
+from PIL import Image as oImage
+import sys
 
 import filters as filters
 
@@ -159,22 +161,23 @@ class ImageFilterHandler:
 
             return new_image
 
+    @staticmethod
+    def apply_filters_wo_db(image, filters_str):
+        filters_dic = ImageFilterHandler.__string_to_dic(filters_str)
+        f_image = ImageFilterHandler.__apply_filters(image, filters_dic)
+        return f_image
+
 
 if __name__ == '__main__':
-    # print([f[0] for f in inspect.getmembers(filters, inspect.isclass) if f[1].__module__ == filters.__name__])
-    # print(ImageFilterHandler.filters)
-    # print()
-    # print(ImageFilterHandler.sponsored_items)
-    # print()
-    # print(ImageFilterHandler.get_sponsored_items())
-    # print()
-    print(ImageFilterHandler.get_filters())
-    # d = {'hello': 'my', 'name': 'is'}
-    # print(d)
-    # print()
-    # j = json.dumps(d, separators=(',', ':'))
-    # print(j)
-    # print()
-    # b = json.loads(j)
-    # print(b)
-
+    # "{\"ClubFilter\":{\"args\":{}}}"
+    # "{\"Grayscale\":{\"args\":{}}}"
+    # "{\"Negative\":{\"args\":{}}}"
+    # "{\"Sepia\":{\"args\":{}}}"
+    # "{\"Flip\":{\"args\":{}}}"
+    # "{\"Mirror\":{\"args\":{}}}"
+    # "{\"Negative\":{\"args\":{}},\"ClubFilter\":{\"args\":{}}}"
+    # "{\"SponsoredImageInsertion\":{\"args\":{\"item\":\"amazon.jpg\"}}}"
+    img = oImage.open('../fisher.jpeg')
+    filters_str = sys.argv[1]
+    f_image = ImageFilterHandler.apply_filters_wo_db(img, filters_str)
+    f_image.save('f_image_woo.jpg')
