@@ -110,7 +110,7 @@ class DataProvider extends Component {
     //}
 
     loadData() {
-        console.log("loaddata");
+        //console.log("loaddata");
         if (this.props.callerType == "HomeFeed") {
             fetch(this.props.endpoint + "?page=" + this.currentPage, {
                 headers: new Headers({ 'Authorization': 'Token ' + this.props.token }),
@@ -123,7 +123,7 @@ class DataProvider extends Component {
                     return response.json();
                 })
                 .then(data => {
-                    if (this.state.tempUserCache.length <= 0) { this.getUsers(); } else { console.log("user cache exists");}
+                    if (this.state.tempUserCache.length <= 0) { this.getUsers(); } 
                     //this.getUsers(); //do it every time to prevent bugs, slower but who cares
 
                     if (this.tempAllComments.length <= 0 || this.madeNewComment) {
@@ -276,7 +276,7 @@ class DataProvider extends Component {
     }
         
     componentWillMount() {
-        console.log("willmount");
+        //console.log("willmount");
         this.loadData();
     }
 
@@ -287,14 +287,14 @@ class DataProvider extends Component {
             this.loadData();
         } else {
             if (this.state.tempUserCache.length <= 0) {
-                console.log("didupdate user from prop");
+                //console.log("didupdate user from prop");
                 this.getUsers();
             }
         }
     }
 
     handleSubmit(event, testVal) {
-        console.log(testVal);
+        //console.log(testVal);
 
         event.preventDefault();
         //console.log("userid: " + this.props.userID);
@@ -311,14 +311,14 @@ class DataProvider extends Component {
             "post": this.commentPostId[testVal + 10],
             "by_admin": false
         });
-        console.log("EPIC SUBMIT3");
+        //console.log("EPIC SUBMIT3");
 
         var xhr = new XMLHttpRequest();
         xhr.withCredentials = true;
 
         xhr.addEventListener("readystatechange", (event) => {
             if (event.target.readyState === 4) {
-                console.log(this.responseText);
+                //console.log(this.responseText);
 
                 this.setState({
                     notificationText: "Posted Comment: " + this.comment.value
@@ -394,7 +394,12 @@ class DataProvider extends Component {
             for (let i = 0; i < this.tempAllComments[0].results.length; i++) { //page 0 is 0 here, more pages later?
                 if (data.results[postIter2]['id'] === this.tempAllComments[0].results[i]['post']) {
                     let tempCommentName = "Loading..."
+                    let isTimeValid = false;
+                    let ctimeArray = [];
                     if (emailCheck >= 0) {
+                        let ctempCreated = this.tempAllComments[0].results[i]['date_created'];
+                        ctimeArray = ctempCreated.split('-').join(',').split('T').join(',').split(':').join(',').split(',');
+                        isTimeValid = true;
                         //console.log("tempusercache is " + this.tempUserCache.length);
                         //console.log("the index i want is " + (this.tempUserCache.length - this.tempAllComments[0].results[i]['user']));
                         //console.log("the value inside index 6 is " + this.tempUserCache[6]);
@@ -406,6 +411,11 @@ class DataProvider extends Component {
                         //tempCommentName = this.tempUserCache[this.tempUserCache.length - this.tempAllComments[0].results[i]['user']];
                     }
 
+                    if (isTimeValid) { //only renders if date created exists
+                        tempComments.push(
+                            <span style={{ 'margin-top': '10px' }} className="w3-right w3-opacity">{ctimeArray[1] + "/" + ctimeArray[2] + "/" + ctimeArray[0] + " at " + ctimeArray[3] + ":" + ctimeArray[4]}</span>
+                        );
+                    }
                     tempComments.push(
                         <div style={{ 'display': 'flex', 'align-items': 'flex-start' }}>
                             <p style={{ 'border-radius': '25px', 'background-color': 'DarkTurquoise', 'color': 'black', 'padding-left': '15px', 'padding-top': '5px', 'padding-bottom': '5px', 'padding-right': '15px', 'margin-top': '10px' }}  > {tempCommentName}</p >
@@ -421,10 +431,6 @@ class DataProvider extends Component {
 
         let tempVal = this.tempCommentSomething;
         this.tempCommentSomething += 1;
-
-        //console.log(timeArray);
-
-        //todo: add block user button. 
 
         return <div>
             <div className="w3-container w3-card w3-white w3-round w3-margin">
@@ -447,8 +453,8 @@ class DataProvider extends Component {
             </div>
         </div>
 
-        //todo: on comment submit, when displaying comments when retrived from the API, parse the comments for hashtags.
-
+        
+            //the OG feed B)
             //<p>{"---------------Post #" + data.results[postIter2]['id'] + "---------------------"}</p>
             //<p>{"Name: " + tempName}</p>
             //<p>{"User: " + data.results[postIter2]['user']}</p>
@@ -461,7 +467,7 @@ class DataProvider extends Component {
 
     nextPage = () => {
         this.drawError = false;
-        console.log("next page called!"); 
+
         const { data } = this.state;
         if (data['count'] <= (this.currentPage) * 10) {
             //this.drawError = true;
@@ -475,11 +481,10 @@ class DataProvider extends Component {
 
     previousPage = () => {
         this.drawError = false;
-        console.log("prev page called!");
+        //console.log("prev page called!");
         if (this.currentPage === 1) {
             //do nothing cause at the end, maybe a visual cue saying u cant go back more
-            //this.drawError = true;
-            //this.loadData();
+
             return;
         }
         this.currentPage -= 1;
@@ -511,11 +516,7 @@ class DataProvider extends Component {
                 }
 
                 this.postIter = -1;
-                //this.tempCommentSomething = 0;
-                //this.comment = [];
-                //this.commentPostId = [];
 
-                //this.tempUserCache = []; 
                 return <div>
                     {ta}
                     <p>
