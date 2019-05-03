@@ -21,7 +21,7 @@ class Navbar extends Component {
                 <div id="navbarBasicExample" className="navbar-menu">
                     <div className="navbar-start">
 
-                        <NavLink to="/homefeed" className="navbar-item">
+                        <NavLink to="/homefeed" className="navbar-item" style={navPadding}>
                             Feed
                         </NavLink>
 
