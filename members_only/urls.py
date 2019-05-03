@@ -29,6 +29,7 @@ urlpatterns = [
     path("user/logout", members_only.views.index, name="index"),
     path("user/invite", members_only.views.index, name="index"),
     path("user/setup", members_only.views.index, name="index"),
+    path("user/profile", members_only.views.index, name="index"),
     path("user/verification", members_only.views.index, name="index"),
     path('api/', include(router.urls)),
     path("admin/", admin.site.urls),
