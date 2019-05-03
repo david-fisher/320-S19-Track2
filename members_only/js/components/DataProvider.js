@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import './pages/frontend_style.css'
+import Notification from "./Notification";
 
 class DataProvider extends Component {
 
@@ -89,7 +90,6 @@ class DataProvider extends Component {
 
 
     renderPost = () => {
-
         const { data, blocked_members } = this.state;
 
         let postIter2 = this.postIter + 1;
@@ -131,6 +131,9 @@ class DataProvider extends Component {
                 <span style={{ 'margin-top': '10px' }} className="w3-right w3-opacity">{timeArray[1] + "/" + timeArray[2] + "/" + timeArray[0] + " at " + timeArray[3] + ":" + timeArray[4]}</span>
                 <div style={{ 'display': 'flex', 'align-items': 'flex-start' }}>
                     <h4 style={{ 'border-radius': '25px', 'background-color': 'steelblue', 'color': 'white', 'padding-left': '15px', 'padding-top': '5px', 'padding-bottom': '5px', 'padding-right': '15px', 'margin-top': '10px' }} >{tempName}</h4>
+                    <div style={{ 'float':'right', 'margin-left': '5px', 'margin-top': '0px' }} className="w3-half">
+                        <button style={{ 'color': 'black', 'padding-right': '2px', 'padding-left': '2px', 'margin': '0px', 'width': '15%', 'border-radius': '15px' }} class="w3-button w3-block w3-red w3-section" title="Block User"><i style={{'color':'white'}} >Block</i></button>
+                    </div>
                 </div>
                 <p style={{ 'word-wrap': 'break-word','margin-left': '25px', 'margin-top': '5px', 'padding-left': '5px' }}>{data.results[postIter2]['content']}</p>
                 <hr class="w3-clear"></hr>
@@ -143,6 +146,8 @@ class DataProvider extends Component {
             </div>
         </div>
 
+        //todo: on comment submit, when displaying comments when retrived from the API, parse the comments for hashtags.
+
             //<p>{"---------------Post #" + data.results[postIter2]['id'] + "---------------------"}</p>
             //<p>{"Name: " + tempName}</p>
             //<p>{"User: " + data.results[postIter2]['user']}</p>
@@ -151,10 +156,15 @@ class DataProvider extends Component {
             //<p>{"-------------------------------------------"}</p>
     }
 
+    drawError = false;
+
     nextPage = () => {
+        this.drawError = false;
         console.log("next page called!"); 
         const { data } = this.state;
-        if (data['count'] <= (this.currentPage)*10 ) {
+        if (data['count'] <= (this.currentPage) * 10) {
+            this.drawError = true;
+            this.loadData();
             return;
         }
         //possibly check if the user is going too far (using count from API call)
@@ -163,9 +173,12 @@ class DataProvider extends Component {
     }
 
     previousPage = () => {
+        this.drawError = false;
         console.log("prev page called!");
         if (this.currentPage === 1) {
             //do nothing cause at the end, maybe a visual cue saying u cant go back more
+            this.drawError = true;
+            this.loadData();
             return;
         }
         this.currentPage -= 1;
@@ -174,6 +187,13 @@ class DataProvider extends Component {
 
     render() {
         const { data, loaded, placeholder } = this.state;
+
+        let errorThing = <div />;
+        if (this.drawError && this.tempUserCache.length>0) {
+        const { data, loaded, placeholder } = this.state;
+            errorThing = <Notification text={"Error, invalid page!"} type={"danger"} />;
+            this.drawError = false;
+        }
 
         if (loaded) {
             if (this.state.callerType === "HomeFeed") {
@@ -189,9 +209,10 @@ class DataProvider extends Component {
                 return <div>
                     {ta}
                     <p>
-                        {<button onClick={this.previousPage}> Previous Page </button>}
-                        {<button onClick={this.nextPage}> Next Page </button>}
+                        {<button className="button is-success" style={navPadding} onClick={this.previousPage}> Previous Page </button>}
+                        {<button className="button is-success" style={navPadding} onClick={this.nextPage}> Next Page </button>}
                     </p>
+                    {errorThing}
                     
                 </div>
            
@@ -203,5 +224,14 @@ class DataProvider extends Component {
         }
     }
 }
+
+const navPadding = {
+    paddingRight: '5px',
+    paddingLeft: '5px',
+    margin: '5px',
+    textAlign: 'center',
+    backgroundColor: 'DarkGreen',
+    fontVariant: 'small-caps'
+};
 
 export default DataProvider;

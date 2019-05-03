@@ -93,7 +93,7 @@ class HomeFeed extends Component {
                 <form onSubmit={this.handleSubmit}>
                     <div className="field">
                         <p className="control">
-                            <textarea className="textarea" placeholder="Write your post here."
+                            <textarea style={{ 'resize': "none"}} className="textarea" placeholder="Write your post here."
                                    ref={(input) => this.post = input}/>
                         </p>
                     </div>
