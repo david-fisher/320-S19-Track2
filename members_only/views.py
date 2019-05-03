@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view
@@ -6,6 +6,7 @@ from members_only.models import User, Post, Comment, Image, ShortLink, Verificat
 from members_only.serializers import UserSerializer, UserSetupSerializer, PostSerializer, CommentSerializer, ImageSerializer, ShortLinkSerializer, VerificationChargeSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+from django.shortcuts import redirect
 
 from members_only.payment_processing.payment_processing import PaymentProcessor, PaymentProcessorType, APIConnectionError, InvalidAPIKeyError, InvalidRequestError, CardDeclinedError, PaymentAdaptorError, UserNotSetupError, UserAlreadySetupError, NoVerificationChargeError
 
@@ -106,11 +107,17 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(request.user, context={'request': request})
         return Response(serializer.data)
 
+
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.order_by('-date_created')
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
+
+    @action(detail=False, methods=['get'], serializer_class=PostSerializer, permission_classes=[])
+    def get_post(self, request):
+        serializer = PostSerializer(request.data)
+        return Response(serializer.data)
 
 
     def create(self, request):
@@ -130,6 +137,11 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
+    @action(detail=False, methods=['get'], serializer_class=CommentSerializer, permission_classes=[])
+    def get_post(self, request):
+        serializer = CommentSerializer(request.data)
+        return Response(serializer.data)
+      
     def create(self, request):
         response = super().create(request)
 
@@ -139,12 +151,16 @@ class CommentViewSet(viewsets.ModelViewSet):
 
         return response
 
-
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
+
+    @action(detail=False, methods=['get'], serializer_class=ImageSerializer, permission_classes=[])
+    def get_post(self, request):
+        serializer = ImageSerializer(request.data)
+        return Response(serializer.data)
 
 
 class ShortLinkViewSet(viewsets.ModelViewSet):
@@ -153,6 +169,54 @@ class ShortLinkViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
+
+@api_view(['GET'])
+def link_shortening(request):
+
+    try:
+        short_link = None  # todo: find out a way to try and get the long url from request.data (involves parsing)
+    except ShortLink.DoesNotExist:
+        # todo create the short link from
+        pass
+
+    if request.method == 'GET':
+        serializer = ShortLinkSerializer(short_link)
+        return Response(serializer.data)
+
+
+# I think we may not need a GET long_url,
+# since the only time it would be used is when we redirect
+
+
+@api_view(['GET'])
+def image_filters(request):
+
+    if request.method == 'GET':
+        pass
+
+
+@api_view(['PUT', 'POST'])
+def apply_filters(request):
+
+    if request.method == 'PUT':
+        pass
+
+    if request.method == 'POST':
+        pass
+
+
+@api_view(['PUT'])
+def remove_filters(request):
+
+    if request.method == 'PUT':
+        pass
+
+
+@api_view(['POST'])
+def edited_comment(request):
+
+    if request.method == 'POST':
+        pass
 
 def setupPayments(new_user, serializer):
     try:
@@ -245,3 +309,9 @@ def verifyUser(user, serializer):
                 "success": False,
                 "message": "The server has encountered an exception."
             })
+
+
+def short_link_redirect(request, short):
+    short_link = get_object_or_404(ShortLink, short_token=short)
+    response = redirect(short_link.originalURL)
+    return response

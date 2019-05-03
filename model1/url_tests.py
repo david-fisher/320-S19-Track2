@@ -25,5 +25,6 @@ class URLTests(unittest.TestCase):
     def test_gen_hash(self):
         assert False, "Should be true"
 
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,7 +1,11 @@
 from __future__ import unicode_literals
 
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+
+
+class Photo(models.Model):
+    file = models.FileField(upload_to='uploads/%Y/%m/%d/')
 
 # Added by Model 2
 class VerificationCharge(models.Model):
@@ -53,6 +57,7 @@ class Post(models.Model):
 class Comment(models.Model):
     post            = models.ForeignKey(Post, on_delete=models.CASCADE)
     user            = models.ForeignKey(User, on_delete=models.CASCADE)
+    sponsored_items = models.ForeignKey("self", on_delete=models.CASCADE,null=True)
     content         = models.TextField(max_length=1000000)
     date_created    = models.DateTimeField(auto_now_add=True, null=True)
     date_modified   = models.DateTimeField(auto_now=True, null=True)
@@ -70,7 +75,8 @@ class CreditCard(models.Model):
 
 class ShortLink(models.Model):
     originalURL = models.URLField()
-    short_token = models.CharField(max_length=10)
+    short_token = models.CharField(max_length=10,null=True)
+
 
 class Image(models.Model):
     user                = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
