@@ -3,8 +3,8 @@ import unittest
 
 from PIL import Image
 
-import filters
-from image_handler import ImageFilterHandler
+import model1.filters as filters
+from model1 import ImageFilterHandler
 
 MANUAL_CHECK = True
 

@@ -1,4 +1,7 @@
 from PIL import Image
+from os import listdir
+from os.path import isfile, join
+import re
 
 
 class ClubFilter:
@@ -31,7 +34,6 @@ class Grayscale:
 
     # Class attributes
     filter_name = "Grayscale"
-    filter_preview_url = ""
 
     # Filter method
     @staticmethod
@@ -58,7 +60,6 @@ class Negative:
 
     # Class' attributes
     filter_name = "Negative"
-    filter_preview_url = ""
 
     # Filter method
     @staticmethod
@@ -84,7 +85,6 @@ class Sepia:
 
     # Class' attributes
     filter_name = "Sepia"
-    filter_preview_url = ""
 
     # Filter method
     @staticmethod
@@ -101,16 +101,16 @@ class Sepia:
                 # Take the pixel at (x, y)
                 r, g, b = img.getpixel((x,y))
                 # Subtract the r g b values from 255 in order to get the inverted values
-                sepiaR = (r * 0.393 + g * 0.769 + b * 0.189)
-                sepiaG = (r * 0.349 + g * 0.686 + b * 0.168)
-                sepiaB = (r * 0.272 + g * 0.534 + b * 0.131)
-                if sepiaR > 255:
-                    sepiaR = 255
-                if sepiaG > 255:
-                    sepiaG = 255
-                if sepiaB > 255:
-                    sepiaB = 255
-                img_copy.putpixel((x,y), (int(sepiaR), int(sepiaG), int(sepiaB)))
+                sepia_r = (r * 0.393 + g * 0.769 + b * 0.189)
+                sepia_g = (r * 0.349 + g * 0.686 + b * 0.168)
+                sepia_b = (r * 0.272 + g * 0.534 + b * 0.131)
+                if sepia_r > 255:
+                    sepia_r = 255
+                if sepia_g > 255:
+                    sepia_g = 255
+                if sepia_b > 255:
+                    sepia_b = 255
+                img_copy.putpixel((x,y), (int(sepia_r), int(sepia_g), int(sepia_b)))
 
         return img_copy
 
@@ -118,7 +118,6 @@ class Flip:
 
     # Class' attributes
     filter_name = "Flip"
-    filter_preview_url = ""
 
     # Filter method
     @staticmethod
@@ -143,7 +142,6 @@ class Mirror:
 
     # Class' attributes
     filter_name = "Mirror"
-    filter_preview_url = ""
 
     # Filter method
     @staticmethod
@@ -164,15 +162,69 @@ class Mirror:
 
         return img_copy
 
-# class Blur:
-#
-#     def filter(image):
-#         img_copy = img.copy()
-#         width, height = img.size
-#         clear_radius = width / 4
-#         img_copy = img_copy.filter(ImageFilter.BLUR)
-#         return img_copy
-#
+
+sponsored_item_path = 'sponsored_items/'
+items_dir_path = 'sponsored_items'
+
+# retrieves sponsored_items files names from sponsored_items directory
+sponsored_items = [f for f in listdir(items_dir_path) if isfile(join(items_dir_path, f))]
+
+
+def item_info(i):
+    name = re.sub('(\.[a-z]*)', '', i).title()
+    return {'name': name}
+
+
+sponsored_item_choices = dict((item, item_info(item)) for item in sponsored_items)
+
+
+class SponsoredImageInsertion:
+    @staticmethod
+    def __scale(width, height, factor):
+        scaled_height = round(height * factor)
+        scaled_width = round(width * factor)
+        return scaled_width, scaled_height
+
+    filter_name = 'Sponsored Items'
+    filter_args = {
+        'item': {
+            'name': 'Item',
+            'type': 'option',
+            'choices': sponsored_item_choices
+        }
+    }
+
+    @staticmethod
+    def filter(img, item='default'):
+        if item == 'default' or item not in sponsored_items:
+            item = sponsored_items[0]
+
+        # create a copy of the original image
+        img_copy = img.copy()
+
+        # retrieve the proper sponsored item insert
+        insert = Image.open(sponsored_item_path + item)
+
+        # retrieve the width and height of the image for the scale
+        width, height = insert.size
+
+        # decide the factor by which we want to scale the insert
+        factor = .2
+
+        # create a scale for insert to be re-sized to
+        scaled_size = SponsoredImageInsertion.__scale(width, height, factor)
+
+        # resize the sponsored item
+        insert = insert.resize(scaled_size)
+
+        # decide where the upper left corner of the insert should be
+        insert_place = (0, 0)
+
+        # paste the insert into the image at insert_place
+        img_copy.paste(insert, insert_place)
+
+        # return the image with the sponsored content inserted
+        return img_copy
 
 
 if __name__ == '__main__':

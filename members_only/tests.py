@@ -1,9 +1,20 @@
+
 from django.test import TestCase
 from members_only.models import User, Post, Comment, CreditCard, Image, Filter
 import tempfile
 
+# from django.contrib.auth.models import AnonymousUser, User
+# from django.test import TestCase, RequestFactory
+import unittest
+
+
+
 
 class UserTestCase(TestCase): 
+
+MANUAL_CHECK = True
+
+
 
     # Test creating an member object
     def create_member(self,name,invitedby=None):
@@ -23,6 +34,7 @@ class UserTestCase(TestCase):
         self.assertTrue(isinstance(new_member, User))
         # since we created a new member, the number should increase to 1
         self.assertEqual(User.objects.count(),1)
+
 
     # Get the object
     def test_get(self):
@@ -273,3 +285,12 @@ class FilterTestCase(TestCase):
        
 
     
+
+#         # Test my_view() as if it were deployed at /customer/details
+#         response = index(request)
+#         self.assertEqual(response.status_code, 200)
+
+
+if __name__ == "__main__":
+    unittest.main()
+
