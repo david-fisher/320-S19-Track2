@@ -34,6 +34,8 @@ class Login extends Component {
         let xhr = new XMLHttpRequest();
         xhr.withCredentials = true;
 
+        this.props.updateToken(token);
+
         xhr.open("GET", "/api/user/current_user/");
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader("cache-control", "no-cache");
@@ -43,9 +45,7 @@ class Login extends Component {
             if (event.target.readyState === 4) {
                 let response_data = JSON.parse(event.target.responseText);
 
-                // updateToken must be called in this request to stop the page from redirecting early
-                this.props.updateToken(token);
-
+                
                 if(response_data.is_verified){                  
                     this.setState({
                         verRequestComplete: true,
