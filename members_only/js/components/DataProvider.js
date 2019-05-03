@@ -121,7 +121,8 @@ class DataProvider extends Component {
                     return response.json();
                 })
                 .then(data => {
-                    if (this.tempUserCache.length <= 0) { this.getUsers(); }
+                    //if (this.tempUserCache.length <= 0) { this.getUsers(); }
+                    this.getUsers(); //do it every time to prevent bugs, slower but who cares
 
                     if (this.tempAllComments.length <= 0 || this.madeNewComment) {
                         this.getComments();
@@ -354,6 +355,7 @@ class DataProvider extends Component {
         let tempComments = (<div />);
         if (this.tempAllComments.length != 0) {
             //console.log(this.tempAllComments.length);
+            //console.log(this.tempAllComments);
             //console.log(this.tempAllComments[0]);
             //console.log(this.tempAllComments[0].results);
             //console.log(this.tempAllComments[0].results[0]['content']);

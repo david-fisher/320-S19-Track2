@@ -13,3 +13,4 @@ uploads/
 test_image_output/
 
 static/main.js
+/members_only/migrations/0002_auto_20190503_0610.py
