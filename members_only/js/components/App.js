@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Cookies from "universal-cookie";
 import Logout from "./pages/Logout";
 import Invite from "./pages/Invite";
+import Profile from "./pages/Profile";
 import Setup from "./pages/Setup";
 import Verification from "./pages/Verification"
 import { Verify } from 'crypto';
@@ -65,6 +66,10 @@ class App extends Component {
                     <div className="section">
                         <div className="container">
                             <Route exact path="/" component={Home}/>
+                            <Route exact path="/user/profile"
+                                render={
+                                    (props) => <Profile {...props} blockedMembers={this.state.blocked_members} userID={this.state.user_id} token={this.state.token} />
+                                   }/>
                             <Route exact path="/user/invite"
                                    render={
                                        (props) => <Invite {...props} token={this.state.token}/>
